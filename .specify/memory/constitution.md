@@ -1,50 +1,110 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: (template) → 1.0.0
+- Modified principles: all placeholders replaced (initial adoption)
+  - [PRINCIPLE_1_NAME] → I. Vertical Slice Delivery
+  - [PRINCIPLE_2_NAME] → II. Every Acceptance Criterion Is Tested (NON-NEGOTIABLE)
+  - [PRINCIPLE_3_NAME] → III. Secure Authentication
+  - [PRINCIPLE_4_NAME] → IV. Role-Based Access on Both Sides
+  - [PRINCIPLE_5_NAME] → V. Phase-Scoped Simplicity
+- Added sections: Technology Constraints; Development Workflow
+- Removed sections: none
+- Deferred TODOs: none
+- Note: Principle V is derived from course-school-user-stories.md (Phase 1 scope),
+  not from the constitution command input.
+- Remove this comment before committing.
+-->
+
+# LearnPath Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Vertical Slice Delivery
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Every user story MUST be built end to end before the next story starts: the Express API
+endpoint(s), the Angular screen(s), and the automated tests that cover it. A story is done
+only when all three exist, the tests pass, and the feature works through the real UI.
+Building a horizontal layer (for example, all endpoints first) ahead of the stories that
+use it is not allowed.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**Rationale**: each finished story is demonstrable and verifiable on its own, and
+integration problems surface per story instead of at the end.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Every Acceptance Criterion Is Tested (NON-NEGOTIABLE)
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Every acceptance criterion of a story MUST map to at least one automated test that fails
+if the criterion is not met. API behaviour (status codes, validation, messages) MUST be
+covered by API tests; screen behaviour (redirects, guards, visible messages) MUST be
+covered by Angular tests. A story with an untested acceptance criterion is not done.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: the acceptance criteria are the contract of the story; tests are how the
+contract is proven and kept from regressing.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Secure Authentication
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- Passwords MUST be hashed with bcrypt and MUST never be stored, logged, or returned in
+  plain text.
+- Authentication MUST use JWT access tokens. The Angular app MUST attach the token to
+  API calls through an HTTP interceptor and MUST clear it on logout.
+- All input MUST be validated on the server, regardless of any client-side validation.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**Rationale**: account data is the first thing every other feature depends on; a
+weakness here compromises the whole platform.
+
+### IV. Role-Based Access on Both Sides
+
+Roles (Guest, Student, Instructor, Admin) MUST be enforced in two places:
+
+- **API**: middleware MUST reject a missing or invalid token with `401` and a valid token
+  with the wrong role with `403`, on every protected endpoint.
+- **Angular**: route guards MUST block pages the current role cannot use, and navigation
+  MUST only show items that role can reach.
+
+The API check is the security boundary; the Angular check is for usability and MUST NOT
+be relied on alone.
+
+**Rationale**: a hidden page is not a protected page; only the server can enforce
+access.
+
+### V. Phase-Scoped Simplicity
+
+Work MUST stay within the current phase defined in `course-school-user-stories.md`.
+Phase 1 excludes payments, quizzes, certificates, and reviews. Abstractions, layers, or
+dependencies MUST NOT be added for anticipated future needs; any added complexity MUST be
+justified in the feature plan.
+
+**Rationale**: a small, working platform beats a large, unfinished one.
+
+## Technology Constraints
+
+- **Frontend**: Angular.
+- **Backend**: Node.js + Express, exposing a REST API with JSON request and response
+  bodies.
+- **Database**: PostgreSQL.
+- **Authentication**: JWT.
+
+Changing any item in this list is a constitution amendment (see Governance).
+
+## Development Workflow
+
+- Each feature follows the Spec Kit flow: specify → clarify → plan → tasks → implement,
+  on its own feature branch.
+- Stories are built in the build order listed in `course-school-user-stories.md`, one
+  story at a time, following Principle I.
+- Before merging a feature branch: all tests pass, every acceptance criterion in scope
+  is covered (Principle II), and the plan's Constitution Check shows no unjustified
+  violations.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution overrides other project practices. Every plan MUST include a
+Constitution Check against these principles, and every review MUST verify compliance.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendments are made by updating this file through `/speckit-constitution`, with the
+version bumped by semantic versioning:
+
+- **MAJOR**: a principle is removed or redefined in a backward-incompatible way.
+- **MINOR**: a principle or section is added, or guidance is materially expanded.
+- **PATCH**: clarifications and wording fixes with no change in meaning.
+
+**Version**: 1.0.0 | **Ratified**: 2026-09-30 | **Last Amended**: 2026-09-30
