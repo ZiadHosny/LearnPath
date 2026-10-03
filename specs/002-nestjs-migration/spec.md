@@ -172,12 +172,12 @@ endpoint per role by declaration alone and confirm the 401/403 behaviour.
   shared concerns (access checks, error format, database access, email) MUST live in shared
   modules.
 - **FR-017**: The previous implementation MUST be removed completely when the migration is done.
-- **FR-017b**: Backend tests MUST run on Jest. The switch MUST happen before any module is
-  migrated: all existing API tests pass on Jest against the current API first. Only the test
-  runner's syntax (imports, mocks, timers) may change, not what the tests check.
 - **FR-017a**: The migration MUST proceed one feature module at a time (auth, then users, then
   password reset); after each module, that module's existing API tests MUST pass before the
   next module starts. The previous implementation is deleted only after all modules pass.
+- **FR-017b**: Backend tests MUST run on Jest. The switch MUST happen before any module is
+  migrated: all existing API tests pass on Jest against the current API first. Only the test
+  runner's syntax (imports, mocks, timers) may change, not what the tests check.
 - **FR-018**: The existing project commands (start everything, run tests, lint, build, set up,
   seed, export API description) MUST keep working with the same names.
 

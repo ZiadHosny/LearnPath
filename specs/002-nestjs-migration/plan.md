@@ -41,7 +41,8 @@ and Mailpit (as in 001); frontend stays on Angular's Vitest runner
 **Constraints**: zero client-visible change (contract: [contracts/api-compatibility.md](contracts/api-compatibility.md));
 no database change; docs only outside production; each module gated by its existing tests
 
-**Scale/Scope**: 11 endpoints, 3 feature modules, 6 request DTOs, 59 EP-01 API tests + new doc tests
+**Scale/Scope**: 11 endpoints, 3 feature modules, 6 request DTOs, 59 EP-01 API tests (58 story
+tests + harness) + new compat, docs and structure tests
 
 ## Constitution Check
 
@@ -50,7 +51,7 @@ no database change; docs only outside production; each module gated by its exist
 | Principle | How this plan complies | Status |
 |---|---|---|
 | I. Vertical Slice Delivery | Technical story (no screen): done when its acceptance criteria are tested and all existing tests still pass, per the TS clause added in 2.0.0. Work is sliced by feature module, each closed by its tests. | ✅ Pass |
-| II. Every Acceptance Criterion Is Tested | 001 tests guard US-01..US-07 unchanged; new tests for docs (SC-004/005), production hiding (FR-014), `@Roles` via a test controller (FR-010), legacy-token compatibility (FR-005). | ✅ Pass |
+| II. Every Acceptance Criterion Is Tested | 001 tests guard US-01..US-07 unchanged; new tests for docs incl. OpenAPI validity (SC-004/005), production hiding (FR-014), `@Roles` via a test controller (FR-010), legacy-token compatibility (FR-005), and an automated `structure.test.ts` for US3 (FR-016/017, SC-007). | ✅ Pass |
 | III. Secure Authentication | bcrypt and JWT code reused as-is; DTO validation on every body with `forbidNonWhitelisted`; filter never logs bodies. | ✅ Pass |
 | IV. Role-Based Access on Both Sides | Global `JwtAuthGuard` (401) + `RolesGuard` with `@Roles` on endpoints (403), exactly the 2.0.0 wording; Angular guards untouched. | ✅ Pass |
 | V. Phase-Scoped Simplicity | No new features. Rejected extra layers: Passport, `@nestjs/jwt`, `nestjs-prisma`, Swagger CLI plugin, Fastify. | ✅ Pass |
@@ -156,7 +157,7 @@ the OpenAPI export, so the three never differ.
 | 3 | Auth module (register, login, refresh, logout) | US-01, US-02, US-03 |
 | 4 | Users module (me, profile, photo, password) + `@Roles` test controller | US-01 … US-06 |
 | 5 | Password-reset module | all 59 EP-01 tests |
-| 6 | Swagger docs + doc tests (replace hand-written OpenAPI and its 13 tests); delete Express/Zod/Vitest; scripts; quickstart | full suite, lint, build, walkthrough |
+| 6 | Swagger docs + doc tests (replace hand-written OpenAPI and its 13 tests; validate with swagger-parser); `structure.test.ts`; delete Express/Zod/Vitest; scripts; quickstart | full suite incl. structure test, lint, build, walkthrough |
 
 ## Complexity Tracking
 

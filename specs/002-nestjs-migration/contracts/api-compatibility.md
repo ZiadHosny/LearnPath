@@ -24,6 +24,7 @@ The 001 API tests are the executable form of this section (SC-001).
 | Unknown route | `{ "statusCode": 404, "message": "Cannot GET /x", "error": "Not Found" }` | `404 { error: { code: "NOT_FOUND", message: "Not found" } }` |
 | DTO validation failure | `{ "statusCode": 400, "message": [ … ], "error": "Bad Request" }` | `400 { error: { code: "VALIDATION_ERROR", message: "Some fields are invalid", details: [ … ] } }` |
 | Malformed JSON body | `400 "Unexpected token …"` | `400 { error: { code: "VALIDATION_ERROR", message: "Request body is not valid JSON" } }` |
+| JSON body over 100 kb | `413 "request entity too large"` | `413 { error: { code: "VALIDATION_ERROR", message: "Request body is not valid JSON" } }` (as 001) |
 | Photo over 2 MB | `413 "File too large"` | `413 { error: { code: "FILE_TOO_LARGE", … } }` |
 | Unhandled error | `500 "Internal server error"` | `500 { error: { code: "INTERNAL", message: "Something went wrong" } }` |
 | Successful POST without explicit code | `201 Created` | the 001 code (`200` login/refresh, `202` reset request, `204` logout/password) via `@HttpCode` |

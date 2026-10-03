@@ -79,8 +79,9 @@ judged first by "does it keep those tests passing unchanged".
 - **Decision**: keep `AppError` and the `Errors` factory as they are (moved to
   `src/common/errors.ts`); services keep throwing them. A global `AllExceptionsFilter` writes
   `{ error: { code, message, details? } }` for `AppError`, and maps Nest/Express exceptions:
-  route not found → `404 NOT_FOUND "Not found"`; JSON parse error / body too large →
-  `400 VALIDATION_ERROR "Request body is not valid JSON"`; Multer file size →
+  route not found → `404 NOT_FOUND "Not found"`; body-parser errors keep their own status as
+  in 001 (JSON parse error → `400`, JSON body over 100 kb → `413`) with
+  `VALIDATION_ERROR "Request body is not valid JSON"`; Multer file size →
   `413 FILE_TOO_LARGE`; anything else → `500 INTERNAL "Something went wrong"` and a log line
   without request body (FR-003, edge cases). `TooManyAttemptsError` sets `Retry-After`.
 - **Rationale**: services become portable unchanged, and the error contract has one owner.
@@ -147,6 +148,20 @@ judged first by "does it keep those tests passing unchanged".
   `tsx` stays only for `prisma db seed`. Removed dependencies at the end: `zod`, `vitest`, and
   the direct `express`, `multer`, `cookie-parser` imports move behind Nest (packages kept where
   Nest needs them).
+
+## R12b. `reflect-metadata` and test app lifecycle
+
+- **Decision**: `import 'reflect-metadata';` is the first line of every entry point that loads
+  Nest or class-validator decorators: `src/main.ts`, `scripts/export-openapi.ts`,
+  `prisma/seed.ts` (it loads the env class) and `tests/helpers/jest-env.ts`.
+- **Decision**: the test helper owns one Nest app at a time. `initApp(options)` closes the
+  current app before building a new one, so a test file can swap in extra controllers
+  (`@Roles` test controller, throw-away docs controller) in its own `beforeAll`.
+- **Decision**: structure rules (one module per feature, no Express/Zod/Vitest left) are
+  checked by an automated `structure.test.ts`, because constitution II requires every
+  acceptance criterion, including US3's, to have an automated test.
+- **Decision**: the OpenAPI document is validated with `@apidevtools/swagger-parser` in the docs
+  test; a valid document is the part of "Apidog can import it" that can be automated.
 
 ## R12. Order of work (FR-017a/b)
 
