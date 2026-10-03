@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  /// Required, trimmed, 2–100 chars
+  fullName     String     @map("full_name") @db.VarChar(100)
+  /// Stored trimmed + lower-case (case-insensitive uniqueness)
+  email        String     @unique @db.VarChar(254)
+  /// bcrypt hash, cost 12. Never selected into API responses
+  passwordHash String     @map("password_hash") @db.VarChar(60)
+  role         Role       @default(STUDENT)
+  status       UserStatus @default(ACTIVE)
+  photoPath    String?    @map("photo_path") @db.VarChar(255)
+  bio          String?    @db.VarChar(500)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+
+  sessions            Session[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+/// One row per signed-in device.
+model Session {
+  /// Carried in the access token as `sid`
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// SHA-256 hex of the cookie value
+  refreshTokenHash String    @unique @map("refresh_token_hash") @db.Char(64)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  /// `created_at + 7 days`; never extended
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz
+  endedAt          DateTime? @map("ended_at") @db.Timestamptz
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+/// Failed login attempts only; keyed by email so unknown emails are treated the same.
+model LoginAttempt {
+  id          BigInt   @id @default(autoincrement())
+  /// Normalised like `users.email`
+  email       String   @db.VarChar(254)
+  attemptedAt DateTime @default(now()) @map("attempted_at") @db.Timestamptz
+
+  @@index([email, attemptedAt])
+  @@map("login_attempts")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// SHA-256 hex of the link token
+  tokenHash String    @unique @map("token_hash") @db.Char(64)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  /// `created_at + 1 hour`
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  usedAt    DateTime? @map("used_at") @db.Timestamptz
+
+  @@index([userId])
+  @@map("password_reset_tokens")
+}

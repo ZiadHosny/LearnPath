@@ -1,0 +1,31 @@
+<mat-toolbar class="toolbar">
+  <a class="logo" routerLink="/">LearnPath</a>
+  <span class="spacer"></span>
+
+  <nav class="links" aria-label="Main">
+    @for (link of links(); track link.path) {
+      <a mat-button [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+    }
+    @if (auth.isLoggedIn()) {
+      <button mat-button type="button" data-test="logout" (click)="logout()">Log out</button>
+    } @else {
+      <a mat-button routerLink="/login" routerLinkActive="active">Log in</a>
+      <a mat-flat-button routerLink="/register">Sign up</a>
+    }
+  </nav>
+
+  <button mat-icon-button class="menu-button" [matMenuTriggerFor]="mobileMenu" aria-label="Open menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #mobileMenu="matMenu">
+    @for (link of links(); track link.path) {
+      <a mat-menu-item [routerLink]="link.path">{{ link.label }}</a>
+    }
+    @if (auth.isLoggedIn()) {
+      <button mat-menu-item type="button" (click)="logout()">Log out</button>
+    } @else {
+      <a mat-menu-item routerLink="/login">Log in</a>
+      <a mat-menu-item routerLink="/register">Sign up</a>
+    }
+  </mat-menu>
+</mat-toolbar>
