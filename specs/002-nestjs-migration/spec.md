@@ -8,6 +8,21 @@
 
 **Input**: User description: "TS-01 Move the API from Express to NestJS, from course-school-user-stories.md"
 
+## Clarifications
+
+### Session 2026-10-03
+
+- Q: How should the new API check incoming input: keep the existing Zod rules or rewrite them as
+  class-validator decorators? → A: Rewrite them as class-validator DTO classes (the NestJS
+  convention); the existing Zod schemas are retired.
+- Q: How is the code moved: step by step inside `backend/`, a new folder alongside, or all at
+  once? → A: Step by step inside `backend/` using the standard NestJS layout; one feature module
+  at a time (auth → users → password reset), each followed by its existing tests; the Express
+  code is deleted only after all modules pass.
+- Q: Which test runner should run the backend tests: keep Vitest or move to Jest? → A: Jest
+  (the NestJS default). The tests are switched to Jest first, while the API is still on
+  Express, and must all pass there before any module is migrated.
+
 ## Context
 
 TS-01 is a technical story. Constitution 2.0.0 changed the backend framework from Express to
@@ -115,6 +130,11 @@ endpoint per role by declaration alone and confirm the 401/403 behaviour.
 - **FR-001**: The API MUST expose the same 11 endpoints, with the same addresses and methods.
 - **FR-002**: The API MUST apply the same input rules and return the same field-level error
   details for invalid input.
+- **FR-002a**: Input rules MUST be defined as class-validator DTO classes, one per request body.
+  Validation failures MUST still produce `400 VALIDATION_ERROR` with
+  `details: [{ field, message }]`, using the field names and messages of 001 (for example
+  "Passwords do not match" on `confirmPassword`). Unknown fields MUST still be refused.
+  The previous input-rule definitions are removed (FR-017).
 - **FR-003**: The API MUST return the same status codes, error codes, messages and error body
   shape for every case listed in the 001 contract, including unknown routes and malformed bodies.
 - **FR-004**: The API MUST keep the refresh cookie's name, flags, path and lifetime unchanged.
@@ -141,7 +161,8 @@ endpoint per role by declaration alone and confirm the 401/403 behaviour.
 - **FR-012**: The documentation and API description MUST be produced from the code itself, so
   any endpoint in the code appears without a separate edit.
 - **FR-013**: Each documented endpoint MUST show its request body rules, example values,
-  success response and possible errors.
+  success response and possible errors. Request body rules MUST come from the same DTO classes
+  that validate the input (FR-002a).
 - **FR-014**: The documentation page and API description MUST NOT be available in production.
 - **FR-015**: The existing command that writes the API description to a file MUST keep working.
 
@@ -151,6 +172,12 @@ endpoint per role by declaration alone and confirm the 401/403 behaviour.
   shared concerns (access checks, error format, database access, email) MUST live in shared
   modules.
 - **FR-017**: The previous implementation MUST be removed completely when the migration is done.
+- **FR-017b**: Backend tests MUST run on Jest. The switch MUST happen before any module is
+  migrated: all existing API tests pass on Jest against the current API first. Only the test
+  runner's syntax (imports, mocks, timers) may change, not what the tests check.
+- **FR-017a**: The migration MUST proceed one feature module at a time (auth, then users, then
+  password reset); after each module, that module's existing API tests MUST pass before the
+  next module starts. The previous implementation is deleted only after all modules pass.
 - **FR-018**: The existing project commands (start everything, run tests, lint, build, set up,
   seed, export API description) MUST keep working with the same names.
 
@@ -164,7 +191,7 @@ defined in [001 data-model.md](../001-auth-accounts/data-model.md).
 ### Measurable Outcomes
 
 - **SC-001**: 100% of the existing EP-01 API tests pass against the new API with no change to
-  their assertions.
+  their assertions (runner syntax aside, FR-017b).
 - **SC-002**: The web app needs 0 changed files to work with the new API, and all its tests
   still pass.
 - **SC-003**: The 001 quickstart walkthrough passes all its checks against the new API.
@@ -179,12 +206,14 @@ defined in [001 data-model.md](../001-auth-accounts/data-model.md).
 
 - The framework is NestJS, as required by constitution 2.0.0; this spec does not compare
   frameworks.
-- The API stays in the `backend/` folder and keeps the same port and environment settings, so
-  the web app's development proxy and `.env` files do not change.
+- The API stays in the `backend/` folder (standard NestJS layout) and keeps the same port and
+  environment settings, so the web app's development proxy and `.env` files do not change.
 - The database layer and its schema, migrations and seed stay as they are.
+- Input rules are rewritten as class-validator DTOs (Clarification 2026-10-03). This is the
+  riskiest part for FR-002/FR-003, so every existing validation test must pass unchanged.
 - The secret used to sign logins stays the same, which is what keeps existing logins valid
   (FR-005).
-- The existing test suite is the safety net: tests may change how they start the API, but not
-  what they check. New tests are added only for new behaviour (documentation, declared roles).
+- The existing test suite is the safety net: tests may change how they start the API and the
+  runner syntax (Jest), but not what they check. New tests are added only for new behaviour (documentation, declared roles).
 - The work is done on top of the 001 implementation and is merged before EP-02 starts.
 - No new end-user features are added (constitution V).
