@@ -1,5 +1,4 @@
-import { describe, expect, it } from 'vitest';
-import { env } from '../../src/config/env.js';
+import { env } from '../../src/config/env.validation.js';
 import { api } from '../helpers/app.js';
 import { prisma } from '../helpers/db.js';
 

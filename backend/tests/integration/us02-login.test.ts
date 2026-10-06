@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { advance, DAY, MINUTE } from '../../src/lib/clock.js';
 import { api, refreshCookieFrom } from '../helpers/app.js';
 import { prisma } from '../helpers/db.js';

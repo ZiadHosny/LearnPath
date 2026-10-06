@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it } from 'vitest';
 import { advance, MINUTE } from '../../src/lib/clock.js';
 import { api, refreshCookieFrom } from '../helpers/app.js';
 import { prisma } from '../helpers/db.js';
@@ -13,7 +12,9 @@ const confirm = (token: string, password = 'newpass22', confirmPassword = passwo
 
 async function tokenFromMail(email: string): Promise<string> {
   const mail = await latestMailTo(email);
-  expect(mail, `no reset email for ${email}`).toBeDefined();
+  // Jest's expect() takes no custom message, so fail with one explicitly.
+  if (!mail) throw new Error(`no reset email for ${email}`);
+  expect(mail).toBeDefined();
   const match = /http:\/\/localhost:4200\/reset-password\/([A-Za-z0-9_-]+)/.exec(mail!.text);
   expect(match).not.toBeNull();
   return match![1];

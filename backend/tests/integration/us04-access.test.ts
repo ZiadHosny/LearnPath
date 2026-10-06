@@ -1,20 +1,22 @@
-import { Router } from 'express';
+import { Controller, Get } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
-import { describe, expect, it } from 'vitest';
+import { Roles } from '../../src/common/decorators/roles.decorator.js';
 import type { Role } from '../../src/generated/prisma/enums.js';
 import { advance, MINUTE } from '../../src/lib/clock.js';
-import { authenticate } from '../../src/middleware/authenticate.js';
-import { requireRole } from '../../src/middleware/require-role.js';
-import { makeApi } from '../helpers/app.js';
+import { api, initApp } from '../helpers/app.js';
 import { createUser } from '../helpers/factories.js';
 
 // Test-only routes, one per role. EP-01 has no real role-restricted business endpoints yet.
-const testRouter = Router();
-testRouter.get('/student', authenticate, requireRole('STUDENT'), (_req, res) => res.json({ ok: true }));
-testRouter.get('/instructor', authenticate, requireRole('INSTRUCTOR'), (_req, res) => res.json({ ok: true }));
-testRouter.get('/admin', authenticate, requireRole('ADMIN'), (_req, res) => res.json({ ok: true }));
+@Controller('__test')
+class TestRolesController {
+  @Get('student') @Roles('STUDENT') student() { return { ok: true }; }
+  @Get('instructor') @Roles('INSTRUCTOR') instructor() { return { ok: true }; }
+  @Get('admin') @Roles('ADMIN') admin() { return { ok: true }; }
+}
 
-const api = makeApi({ extraRouters: [['/api/__test', testRouter]] });
+beforeAll(async () => {
+  await initApp({ controllers: [TestRolesController] });
+});
 
 async function tokenFor(role: Role) {
   const { user, password } = await createUser({ role });

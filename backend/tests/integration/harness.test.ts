@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { api } from '../helpers/app.js';
 
 describe('test harness', () => {

@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
 import { avatarsDir } from '../../src/config/paths.js';
 import { api } from '../helpers/app.js';
 import { prisma } from '../helpers/db.js';

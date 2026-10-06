@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env.js';
+import { env } from '../config/env.validation.js';
 import type { Role } from '../generated/prisma/enums.js';
 import { now } from './clock.js';
 

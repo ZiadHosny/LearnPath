@@ -1,7 +1,11 @@
-import { env } from '../src/config/env.js';
-import { prisma } from '../src/db/prisma.js';
+import 'reflect-metadata';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { env } from '../src/config/env.validation.js';
+import { PrismaClient } from '../src/generated/prisma/client.js';
 import type { Role, UserStatus } from '../src/generated/prisma/enums.js';
 import { hashPassword } from '../src/lib/password.js';
+
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: env.DATABASE_URL }) });
 
 const users: Array<{ email: string; fullName: string; role: Role; status: UserStatus }> = [
   { email: 'admin@learnpath.local', fullName: 'LearnPath Admin', role: 'ADMIN', status: 'ACTIVE' },

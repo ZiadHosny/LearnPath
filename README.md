@@ -7,7 +7,8 @@ User stories: [course-school-user-stories.md](course-school-user-stories.md).
 | Part | Stack | Folder |
 |---|---|---|
 | Frontend | Angular 22, Angular Material | [frontend/](frontend/) |
-| API | Node.js 24, Express 5, TypeScript, Prisma | [backend/](backend/) |
+| API | Node.js 24, NestJS 12, TypeScript, Prisma | [backend/](backend/) |
+| API docs | Swagger UI (development only) | http://localhost:3000/api/docs |
 | Database | PostgreSQL 17 (Docker) | [docker-compose.yml](docker-compose.yml) |
 | Dev email | Mailpit (Docker) | http://localhost:8025 |
 

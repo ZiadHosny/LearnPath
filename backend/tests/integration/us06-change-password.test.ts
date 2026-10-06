@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { api, refreshCookieFrom } from '../helpers/app.js';
 import { createUser } from '../helpers/factories.js';
 

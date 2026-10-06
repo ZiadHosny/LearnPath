@@ -49,6 +49,12 @@ judged first by "does it keep those tests passing unchanged".
 - **Alternatives**: `ts-jest` (slower; its 29.x peer range lags Jest 30); keeping Vitest
   (rejected in clarification).
 
+- **Found during implementation**: NestJS 12 packages ship as ESM (`"type": "module"`). Node
+  24 can `require()` them, but Jest only does so with `--experimental-vm-modules`, so the test
+  script is `node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand`. The app
+  itself stays CommonJS; Node's native `require(esm)` loads Nest at run time. `jest.config.js`
+  is plain JS (a `.ts` config would need `ts-node`).
+
 ## R4. Input validation with class-validator
 
 - **Decision**: one DTO class per request body; a global `ValidationPipe` with
