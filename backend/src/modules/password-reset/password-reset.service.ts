@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Errors } from '../../common/errors.js';
+import { AppLogger } from '../../common/logging/app-logger.service.js';
 import type { EnvironmentVariables } from '../../config/env.validation.js';
 import { MINUTE, now } from '../../lib/clock.js';
 import { hashPassword } from '../../lib/password.js';
@@ -10,12 +11,13 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 
 @Injectable()
 export class PasswordResetService {
-  private readonly logger = new Logger(PasswordResetService.name);
+  private readonly log = { context: PasswordResetService.name, story: 'US-07' };
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly mail: MailService,
     private readonly config: ConfigService<EnvironmentVariables, true>,
+    private readonly logger: AppLogger,
   ) {}
 
   // Returns immediately; the email (if any) is sent afterwards so timing reveals nothing.
@@ -42,10 +44,15 @@ export class PasswordResetService {
     ]);
 
     const link = `${this.config.get('APP_URL', { infer: true })}/reset-password/${token}`;
+    this.logger.log('Password reset requested', { ...this.log, userId: user.id });
     setImmediate(() => {
       this.mail.sendPasswordResetEmail(user.email, link).catch((error: unknown) => {
-        // Never log the link: it is a credential.
-        this.logger.error(`Failed to send password reset email: ${(error as Error).message}`);
+        // Never log the link or the address: the link is a credential.
+        this.logger.error('Failed to send password reset email', {
+          ...this.log,
+          userId: user.id,
+          reason: (error as Error).message,
+        });
       });
     });
   }
@@ -82,5 +89,6 @@ export class PasswordResetService {
         data: { endedAt: at },
       });
     });
+    this.logger.success('Password reset completed', { ...this.log, userId: record.userId });
   }
 }

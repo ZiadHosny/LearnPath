@@ -69,6 +69,26 @@ Seed accounts, password `Passw0rd!`: `admin@learnpath.local`, `instructor@learnp
 
 PostgreSQL is published on port **5433** so it does not clash with a local PostgreSQL on 5432.
 
+## Logging
+
+One colored logger for the whole API (`backend/src/common/logging/`). Each line shows time, level,
+source, the user story when there is one, and the message:
+
+```
+2026-10-07 23:51:16.108 SUCCESS [AuthService] [US-02] User logged in userId=… role=STUDENT
+2026-10-07 23:51:16.111 LOG     [HTTP] POST /api/auth/login 200 311ms
+```
+
+| Setting (`backend/.env`) | Values | Default |
+|---|---|---|
+| `LOG_LEVEL` | `error`, `warn`, `success`, `log`, `debug`, `verbose` (lowest level shown) | `log` |
+| `LOG_COLORS` | `auto` (colors in a terminal), `true`, `false` — `NO_COLOR` always turns them off | `auto` |
+| `LOG_FORMAT` | `pretty`, `json` (one JSON object per line, for log tools) | `pretty` |
+
+Colors and labels per level: `backend/src/common/logging/logger.config.ts`. In code, inject
+`AppLogger` and call e.g. `logger.success('User registered', { context: 'AuthService', story: 'US-01', userId })`.
+Never log passwords, tokens, cookies or email addresses; request lines mask tokens in paths.
+
 ## Test it
 
 ```bash

@@ -4,6 +4,7 @@ import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
 import { RolesGuard } from './common/guards/roles.guard.js';
+import { LoggingModule } from './common/logging/logging.module.js';
 import { createValidationPipe } from './common/pipes/validation.pipe.js';
 import { validateEnv } from './config/env.validation.js';
 import { MailModule } from './mail/mail.module.js';
@@ -15,6 +16,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
+    LoggingModule,
     PrismaModule,
     MailModule,
     AuthModule,

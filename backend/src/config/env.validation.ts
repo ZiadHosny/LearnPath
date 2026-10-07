@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsString,
@@ -53,6 +54,16 @@ export class EnvironmentVariables {
 
   @IsString()
   SEED_PASSWORD = 'Passw0rd!';
+
+  // Logging (TS-03): lowest level printed, colors, and output format.
+  @IsIn(['error', 'warn', 'success', 'log', 'debug', 'verbose'])
+  LOG_LEVEL: 'error' | 'warn' | 'success' | 'log' | 'debug' | 'verbose' = 'log';
+
+  @IsIn(['auto', 'true', 'false'])
+  LOG_COLORS: 'auto' | 'true' | 'false' = 'auto';
+
+  @IsIn(['pretty', 'json'])
+  LOG_FORMAT: 'pretty' | 'json' = 'pretty';
 }
 
 export function validateEnv(raw: Record<string, unknown>): EnvironmentVariables {

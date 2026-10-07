@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';
 import { AppError } from './common/errors.js';
+import { AppLogger } from './common/logging/app-logger.service.js';
+import { createRequestLogger } from './common/logging/request-logger.middleware.js';
 import { uploadsDir } from './config/paths.js';
 
 // express.json() failures keep their own status, as in 001 (400 parse error, 413 too large).
@@ -38,8 +40,13 @@ export function buildOpenApiDocument(app: NestExpressApplication): OpenAPIObject
 // Every app-level setting in one place, shared by main.ts, the tests and the OpenAPI export,
 // so the three never differ. Create the app with { bodyParser: false } before calling this.
 export function configureApp(app: NestExpressApplication): NestExpressApplication {
+  // NestJS's own messages go through our logger too (create the app with bufferLogs: true).
+  const logger = app.get(AppLogger);
+  app.useLogger(logger);
+
   app.setGlobalPrefix('api');
   app.disable('x-powered-by');
+  app.use(createRequestLogger(logger));
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-origin' } }));
   app.use(cookieParser());
   app.useBodyParser('json', { limit: '100kb' });
