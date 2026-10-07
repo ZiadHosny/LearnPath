@@ -1,8 +1,7 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-// Same rule and message as the server (backend/src/lib/password.ts).
-export const PASSWORD_RULE_MESSAGE =
-  'Password must be at least 8 characters with a letter and a number';
+// Same rule as the server (backend/src/common/dto/password-rule.ts); the message is the
+// translation key 'validation.passwordRule'.
 
 export const passwordRule: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const value = String(control.value ?? '');

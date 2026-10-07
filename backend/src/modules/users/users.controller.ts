@@ -82,8 +82,8 @@ export class UsersController {
   ) {
     if (!file) {
       throw new AppError('VALIDATION_ERROR', {
-        message: 'Choose a photo to upload',
-        details: [{ field: 'photo', message: 'Choose a photo to upload' }],
+        messageKey: 'validation.photoRequired',
+        details: [{ field: 'photo', message: 'validation.photoRequired' }],
       });
     }
     return toUserDto(await this.photos.savePhoto(auth.userId, file.buffer));

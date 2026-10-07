@@ -7,6 +7,7 @@ export interface User {
   role: Role;
   photoUrl: string | null;
   bio: string | null;
+  language?: string | null; // preferred language saved on the account (EP-06)
 }
 
 export interface AuthResponse {

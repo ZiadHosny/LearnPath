@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional, ApiResponse } from '@nestjs/swagger';
-import { ERROR_CATALOG, type ErrorCode } from '../http/error-catalog.js';
+import { ERROR_CATALOG, errorMessage, type ErrorCode } from '../http/error-catalog.js';
 
 class ErrorDetailDto {
   @ApiProperty({ example: 'email' }) field!: string;
@@ -32,7 +32,7 @@ export const ApiErrors = (...codes: ErrorCode[]) => {
       ApiResponse({
         status,
         type: ErrorResponseDto,
-        description: group.map((code) => `${code}: ${ERROR_CATALOG[code].message}`).join(' · '),
+        description: group.map((code) => `${code}: ${errorMessage(code)}`).join(' · '),
       }),
     ),
   );

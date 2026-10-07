@@ -1,31 +1,36 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import type { I18nService } from '../i18n/i18n.service';
 
-// Exact texts from contracts/ui-routes.md ("Visible messages").
-const MESSAGES: Record<string, string> = {
-  EMAIL_TAKEN: 'Email already registered',
-  INVALID_CREDENTIALS: 'Invalid email or password',
-  ACCOUNT_BLOCKED: 'Account blocked',
-  LINK_EXPIRED: 'Link expired',
-  INVALID_CURRENT_PASSWORD: 'Current password is incorrect',
-  FILE_TOO_LARGE: 'Photo must be a JPG or PNG image of 2 MB or less',
-  UNSUPPORTED_FILE_TYPE: 'Photo must be a JPG or PNG image of 2 MB or less',
-};
+// Error codes the web app has its own text for (core/i18n/locales/*.ts → errors.<CODE>).
+const KNOWN_CODES = new Set([
+  'EMAIL_TAKEN',
+  'INVALID_CREDENTIALS',
+  'ACCOUNT_BLOCKED',
+  'LINK_EXPIRED',
+  'INVALID_CURRENT_PASSWORD',
+  'FILE_TOO_LARGE',
+  'UNSUPPORTED_FILE_TYPE',
+]);
 
 export function errorCode(error: unknown): string | null {
   if (error instanceof HttpErrorResponse) return error.error?.error?.code ?? null;
   return null;
 }
 
-export function messageFor(error: unknown): string {
-  if (!(error instanceof HttpErrorResponse)) return 'Something went wrong. Please try again.';
-  if (error.status === 0) return 'Cannot reach the server. Check your connection and try again.';
+// A message for an API error in the current language. Unknown codes use the API's own message,
+// which the API already sends in the requested language (Accept-Language).
+export function messageFor(error: unknown, i18n: I18nService): string {
+  if (!(error instanceof HttpErrorResponse)) return i18n.t('errors.generic');
+  if (error.status === 0) return i18n.t('errors.offline');
 
   const code = errorCode(error);
   if (code === 'TOO_MANY_ATTEMPTS') {
     const seconds = Number(error.headers.get('Retry-After') ?? 900);
     const minutes = Math.max(1, Math.ceil(seconds / 60));
-    return `Too many failed attempts. Try again in ${minutes} minute${minutes === 1 ? '' : 's'}.`;
+    return minutes === 1
+      ? i18n.t('errors.TOO_MANY_ATTEMPTS_ONE')
+      : i18n.t('errors.TOO_MANY_ATTEMPTS', { minutes: i18n.number(minutes) });
   }
-  if (code && MESSAGES[code]) return MESSAGES[code];
-  return error.error?.error?.message ?? 'Something went wrong. Please try again.';
+  if (code && KNOWN_CODES.has(code)) return i18n.t(`errors.${code}`);
+  return error.error?.error?.message ?? i18n.t('errors.generic');
 }

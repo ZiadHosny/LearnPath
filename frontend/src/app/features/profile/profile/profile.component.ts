@@ -8,18 +8,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { messageFor } from '../../../core/api/api-error';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { User } from '../../../core/auth/auth.models';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProfileService } from '../profile.service';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const PHOTO_TYPES = ['image/jpeg', 'image/png'];
-export const PHOTO_LIMITS_MESSAGE = 'Photo must be a JPG or PNG image of 2 MB or less';
 
 @Component({
   selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
+    TranslatePipe,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -30,6 +32,7 @@ export const PHOTO_LIMITS_MESSAGE = 'Photo must be a JPG or PNG image of 2 MB or
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
+  protected readonly i18n = inject(I18nService);
   private readonly profile = inject(ProfileService);
   private readonly auth = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
@@ -59,7 +62,7 @@ export class ProfileComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (user) => this.show(user),
-        error: (error) => this.loadError.set(messageFor(error)),
+        error: (error) => this.loadError.set(messageFor(error, this.i18n)),
       });
   }
 
@@ -76,9 +79,9 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (user) => {
           this.show(user);
-          this.snackBar.open('Profile updated', undefined, { duration: 3000 });
+          this.snackBar.open(this.i18n.t('profile.updated'), undefined, { duration: 3000 });
         },
-        error: (error) => this.formError.set(messageFor(error)),
+        error: (error) => this.formError.set(messageFor(error, this.i18n)),
       });
   }
 
@@ -90,7 +93,7 @@ export class ProfileComponent implements OnInit {
 
     // Client-side check for a quick answer; the server checks the real content again.
     if (!PHOTO_TYPES.includes(file.type) || file.size > MAX_PHOTO_BYTES) {
-      this.photoError.set(PHOTO_LIMITS_MESSAGE);
+      this.photoError.set(this.i18n.t('profile.photoLimits'));
       return;
     }
 
@@ -102,9 +105,9 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (user) => {
           this.show(user);
-          this.snackBar.open('Profile updated', undefined, { duration: 3000 });
+          this.snackBar.open(this.i18n.t('profile.updated'), undefined, { duration: 3000 });
         },
-        error: (error) => this.photoError.set(messageFor(error)),
+        error: (error) => this.photoError.set(messageFor(error, this.i18n)),
       });
   }
 

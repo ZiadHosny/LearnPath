@@ -8,7 +8,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { errorCode, messageFor } from '../../../core/api/api-error';
-import { PASSWORD_RULE_MESSAGE, matchFields, passwordRule } from '../../../core/forms/validators';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { matchFields, passwordRule } from '../../../core/forms/validators';
 import { PasswordResetService } from '../password-reset.service';
 
 type LinkState = 'checking' | 'valid' | 'expired' | 'error';
@@ -17,6 +19,7 @@ type LinkState = 'checking' | 'valid' | 'expired' | 'error';
   selector: 'app-reset-password',
   imports: [
     ReactiveFormsModule,
+    TranslatePipe,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -26,14 +29,13 @@ type LinkState = 'checking' | 'valid' | 'expired' | 'error';
   templateUrl: './reset-password.component.html',
 })
 export class ResetPasswordComponent implements OnInit {
+  protected readonly i18n = inject(I18nService);
   private readonly passwordReset = inject(PasswordResetService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
   // Route param, bound by withComponentInputBinding().
-  readonly token = input.required<string>();
-
-  protected readonly passwordRuleMessage = PASSWORD_RULE_MESSAGE;
+  readonly token = input.required<string>();
   protected readonly state = signal<LinkState>('checking');
   protected readonly pending = signal(false);
   protected readonly serverError = signal<string | null>(null);
@@ -51,7 +53,7 @@ export class ResetPasswordComponent implements OnInit {
       next: () => this.state.set('valid'),
       error: (error) => {
         this.state.set(errorCode(error) === 'LINK_EXPIRED' ? 'expired' : 'error');
-        this.serverError.set(messageFor(error));
+        this.serverError.set(messageFor(error, this.i18n));
       },
     });
   }
@@ -68,12 +70,12 @@ export class ResetPasswordComponent implements OnInit {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: () => {
-          this.snackBar.open('Password changed', undefined, { duration: 4000 });
+          this.snackBar.open(this.i18n.t('changePassword.done'), undefined, { duration: 4000 });
           void this.router.navigateByUrl('/login');
         },
         error: (error) => {
           if (errorCode(error) === 'LINK_EXPIRED') this.state.set('expired');
-          this.serverError.set(messageFor(error));
+          this.serverError.set(messageFor(error, this.i18n));
         },
       });
   }

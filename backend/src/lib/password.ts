@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import { env } from '../config/env.validation.js';
+import { en } from '../i18n/locales/en.js';
 
-// The rule itself is applied by @PasswordRule() (common/dto/password-rule.ts).
-export const PASSWORD_RULE_MESSAGE =
-  'Password must be at least 8 characters with a letter and a number';
+// English text of the password rule, for the API docs. The rule itself is applied by
+// @PasswordRule() (common/dto/password-rule.ts); responses use the translated text.
+export const PASSWORD_RULE_MESSAGE = en.validation.passwordRule;
 
 export function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, env.BCRYPT_COST);

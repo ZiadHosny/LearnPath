@@ -7,21 +7,33 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Role } from '../../core/auth/auth.models';
 import { AuthService } from '../../core/auth/auth.service';
 import { roleHome } from '../../core/auth/role-home';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { LanguageSwitchComponent } from './language-switch.component';
 
+// Translation keys (core/i18n/locales/*.ts → nav.*).
 const HOME_LABEL: Record<Role, string> = {
-  STUDENT: 'My Learning',
-  INSTRUCTOR: 'My Courses',
-  ADMIN: 'Dashboard',
+  STUDENT: 'nav.myLearning',
+  INSTRUCTOR: 'nav.myCourses',
+  ADMIN: 'nav.dashboard',
 };
 
 interface MenuLink {
-  label: string;
+  label: string; // translation key
   path: string;
 }
 
 @Component({
   selector: 'app-header',
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, RouterLink, RouterLinkActive],
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    RouterLink,
+    RouterLinkActive,
+    TranslatePipe,
+    LanguageSwitchComponent,
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -32,12 +44,12 @@ export class HeaderComponent {
   // Menu table in contracts/ui-routes.md (FR-016).
   protected readonly links = computed<MenuLink[]>(() => {
     const role = this.auth.role();
-    if (!role) return [{ label: 'Catalog', path: '/catalog' }];
+    if (!role) return [{ label: 'nav.catalog', path: '/catalog' }];
     return [
-      { label: 'Catalog', path: '/catalog' },
+      { label: 'nav.catalog', path: '/catalog' },
       { label: HOME_LABEL[role], path: roleHome(role) },
-      { label: 'Profile', path: '/profile' },
-      { label: 'Change password', path: '/profile/password' },
+      { label: 'nav.profile', path: '/profile' },
+      { label: 'nav.changePassword', path: '/profile/password' },
     ];
   });
 

@@ -8,13 +8,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { messageFor } from '../../../core/api/api-error';
-import { PASSWORD_RULE_MESSAGE, matchFields, passwordRule } from '../../../core/forms/validators';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { matchFields, passwordRule } from '../../../core/forms/validators';
 import { ProfileService } from '../profile.service';
 
 @Component({
   selector: 'app-change-password',
   imports: [
     ReactiveFormsModule,
+    TranslatePipe,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -24,10 +27,9 @@ import { ProfileService } from '../profile.service';
   templateUrl: './change-password.component.html',
 })
 export class ChangePasswordComponent {
+  protected readonly i18n = inject(I18nService);
   private readonly profile = inject(ProfileService);
-  private readonly snackBar = inject(MatSnackBar);
-
-  protected readonly passwordRuleMessage = PASSWORD_RULE_MESSAGE;
+  private readonly snackBar = inject(MatSnackBar);
   protected readonly pending = signal(false);
   protected readonly serverError = signal<string | null>(null);
 
@@ -53,9 +55,9 @@ export class ChangePasswordComponent {
       .subscribe({
         next: () => {
           this.form.reset();
-          this.snackBar.open('Password changed', undefined, { duration: 3000 });
+          this.snackBar.open(this.i18n.t('changePassword.done'), undefined, { duration: 3000 });
         },
-        error: (error) => this.serverError.set(messageFor(error)),
+        error: (error) => this.serverError.set(messageFor(error, this.i18n)),
       });
   }
 }

@@ -29,6 +29,7 @@ describe('US-01 Register an account', () => {
       role: 'STUDENT',
       photoUrl: null,
       bio: null,
+      language: null, // added by EP-06 (006 FR-006): preferred language, not chosen yet
     });
 
     const cookie = (res.headers['set-cookie'] as unknown as string[]).find((c) =>

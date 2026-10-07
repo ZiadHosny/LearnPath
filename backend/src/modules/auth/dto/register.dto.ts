@@ -8,15 +8,15 @@ import { PASSWORD_RULE_MESSAGE } from '../../../lib/password.js';
 export class RegisterDto {
   @ApiProperty({ example: 'Ali Hassan', minLength: 2, maxLength: 100 })
   @Trim()
-  @IsString({ message: 'Full name must be 2–100 characters' })
-  @Length(2, 100, { message: 'Full name must be 2–100 characters' })
+  @IsString({ message: 'validation.fullNameLength' })
+  @Length(2, 100, { message: 'validation.fullNameLength' })
   fullName!: string;
 
   @ApiProperty({ example: 'ali@example.com', format: 'email', maxLength: 254, description: 'Stored lower-case; must be unique' })
   @TrimLowerCase()
-  @IsString({ message: 'Enter a valid email' })
-  @MaxLength(254, { message: 'Email is too long' })
-  @IsEmail({}, { message: 'Enter a valid email' })
+  @IsString({ message: 'validation.emailInvalid' })
+  @MaxLength(254, { message: 'validation.emailTooLong' })
+  @IsEmail({}, { message: 'validation.emailInvalid' })
   email!: string;
 
   @ApiProperty({ example: 'abc12345', minLength: 8, description: PASSWORD_RULE_MESSAGE })
@@ -24,7 +24,7 @@ export class RegisterDto {
   password!: string;
 
   @ApiProperty({ example: 'abc12345', description: 'Must equal password' })
-  @IsString({ message: 'Passwords do not match' })
-  @Match('password', { message: 'Passwords do not match' })
+  @IsString({ message: 'validation.passwordsMismatch' })
+  @Match('password', { message: 'validation.passwordsMismatch' })
   confirmPassword!: string;
 }

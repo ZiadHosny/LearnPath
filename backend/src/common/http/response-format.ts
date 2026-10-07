@@ -1,3 +1,5 @@
+import { DEFAULT_LANGUAGE, type LanguageCode } from '../../i18n/languages.js';
+import { t } from '../../i18n/translate.js';
 import type { AppError } from './app-error.js';
 
 // ─── The shape of every API response, decided here ──────────────────────────────────────────
@@ -20,12 +22,18 @@ export interface ErrorBody {
   error: { code: string; message: string; details?: Array<{ field: string; message: string }> };
 }
 
-export function toErrorBody(error: AppError): ErrorBody {
+// Texts are translated into the request's language (EP-06); codes never change.
+export function toErrorBody(error: AppError, lang: LanguageCode = DEFAULT_LANGUAGE): ErrorBody {
+  const message = error.fixedMessage ?? t(lang, error.messageKey ?? `errors.${error.code}`);
+  const details = error.details?.map((detail) => ({
+    field: detail.field,
+    message: t(lang, detail.message, { field: detail.field }),
+  }));
   return {
     error: {
       code: error.code,
-      message: error.message,
-      ...(error.details ? { details: error.details } : {}),
+      message,
+      ...(details ? { details } : {}),
     },
   };
 }
