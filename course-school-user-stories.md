@@ -6,7 +6,7 @@ Sep 29, 2026 · Ziad Hosny
 
 LearnPath is an online course school (tagline: "Your way to learn"). Phase 1 delivers a working platform: people sign up, instructors publish courses with lessons, students enroll and track progress, and an admin keeps things in order. Everything else (payments, quizzes, certificates, reviews) comes in later phases.
 
-**Stack:** Angular (frontend) · Node.js + Express (REST API) · a database of your choice (e.g. PostgreSQL or MongoDB) · JWT authentication.
+**Stack:** Angular (frontend) · Node.js + NestJS (REST API) · PostgreSQL · JWT authentication. EP-01 was first built on Express; TS-01 moves the API to NestJS before EP-02.
 
 **Roles**
 
@@ -21,16 +21,17 @@ LearnPath is an online course school (tagline: "Your way to learn"). Phase 1 del
 
 ## Epics at a glance
 
-Phase 1 has 5 epics and 29 stories (78 points); each epic below lists its stories in build order.
+Phase 1 has 5 epics and 29 user stories (78 points), plus 1 technical story (8 points); each epic below lists its stories in build order.
 
 | Epic ID   | Epic                                  | Goal                                                         | Stories       | Count  | Points |
 | --------- | ------------------------------------- | ------------------------------------------------------------ | ------------- | ------ | ------ |
 | EP-01     | Authentication & accounts             | Users register, log in and reach only what their role allows | US-01 → US-07 | 7      | 19     |
+| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01         | 1      | 8      |
 | EP-02     | Course catalog                        | Visitors find and evaluate published courses                 | US-08 → US-11 | 4      | 11     |
 | EP-03     | Instructor course & lesson management | Instructors build, structure and publish courses             | US-12 → US-18 | 7      | 19     |
 | EP-04     | Enrollment & learning                 | Students enroll, study lessons and track progress            | US-19 → US-24 | 6      | 16     |
 | EP-05     | Admin basics                          | Admin manages users, roles, categories and courses           | US-25 → US-29 | 5      | 13     |
-| **Total** |                                       |                                                              |               | **29** | **78** |
+| **Total** |                                       |                                                              |               | **30** | **86** |
 
 ## EP-01 · Epic: Authentication & accounts
 
@@ -93,6 +94,21 @@ As a **registered user**, I want to reset my password by email, so that I can ge
 - "Forgot password" sends a reset link valid for 1 hour.
 - The link works once; after use or expiry it shows "Link expired".
 - The response is the same whether or not the email exists (no account leaking).
+
+## TECH · Platform
+
+Technical stories have no end-user screen; they change how the system is built, not what it does.
+
+### TS-01 Move the API from Express to NestJS — Must · 8 pts
+
+As the **development team**, I want the API built on NestJS with one module per feature, so that the next epics follow one clear structure and the API documentation is generated from the code.
+
+- The API runs on NestJS with feature modules `auth`, `users`, `password-reset`, plus shared `common/` (guards, decorators, exception filter), `prisma/` and `mail/` modules.
+- All 11 EP-01 endpoints keep the same paths, request bodies, responses, status codes, cookie and error format, so the Angular app needs no change.
+- The existing API tests for US-01 → US-07 pass against the NestJS app with no change to what they check (only the test app setup may change).
+- Login is checked by a guard (missing, invalid or expired token → 401); roles are declared with `@Roles(...)` and checked by a roles guard (wrong role → 403).
+- API documentation is generated from the code (`@nestjs/swagger`): Swagger UI at `/api/docs` and `/api/openapi.json` in development only, listing every endpoint without a hand-written list; Apidog import still works.
+- No new features and no database changes: the Prisma schema and migrations stay as they are.
 
 ## EP-02 · Epic: Course catalog
 
@@ -281,12 +297,13 @@ As an **admin**, I want a simple dashboard, so that I can see how the school is 
 
 ## Build order & definition of done
 
-Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 stories and 78 points.
+Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 (8 points).
 
 | Sprint | Goal                             | Stories                                                           | Points |
 | ------ | -------------------------------- | ----------------------------------------------------------------- | ------ |
 | 0      | Project setup                    | Angular app, Node/Express API, database, seed admin user, CI/lint | —      |
 | 1      | People can sign in               | US-01, US-02, US-03, US-04                                        | 10     |
+| 1b     | Move the API to NestJS           | TS-01                                                             | 8      |
 | 2      | Instructors can start courses    | US-26, US-27, US-12, US-13, US-14                                 | 11     |
 | 3      | Courses have content and go live | US-15, US-16, US-17                                               | 10     |
 | 4      | Public catalog                   | US-08, US-09, US-11                                               | 8      |

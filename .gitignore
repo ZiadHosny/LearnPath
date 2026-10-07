@@ -1,0 +1,39 @@
+# Dependencies and build output
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.angular/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment (secrets). Only the example file is shared.
+.env
+.env.*
+!.env.example
+
+# User uploads (keep the empty folder)
+backend/uploads/avatars/*
+!backend/uploads/avatars/.gitkeep
+
+# Prisma client, regenerated from prisma/schema.prisma by `npm install` / `prisma generate`
+backend/src/generated/
+
+# Editors (frontend/.vscode keeps Angular's shared launch/tasks files via frontend/.gitignore)
+/.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code personal settings (shared settings and skills stay tracked)
+.claude/settings.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated API description (npm run openapi); import into Apidog from the file or http://localhost:3000/api/openapi.json
+backend/openapi.json

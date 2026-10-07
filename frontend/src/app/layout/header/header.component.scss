@@ -1,0 +1,38 @@
+.toolbar {
+  gap: 8px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.logo {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.active {
+  color: var(--mat-sys-primary);
+}
+
+.menu-button {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .links {
+    display: none;
+  }
+
+  .menu-button {
+    display: inline-flex;
+  }
+}

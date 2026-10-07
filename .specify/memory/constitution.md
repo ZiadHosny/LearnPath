@@ -1,31 +1,15 @@
-<!--
-Sync Impact Report
-- Version change: (template) → 1.0.0
-- Modified principles: all placeholders replaced (initial adoption)
-  - [PRINCIPLE_1_NAME] → I. Vertical Slice Delivery
-  - [PRINCIPLE_2_NAME] → II. Every Acceptance Criterion Is Tested (NON-NEGOTIABLE)
-  - [PRINCIPLE_3_NAME] → III. Secure Authentication
-  - [PRINCIPLE_4_NAME] → IV. Role-Based Access on Both Sides
-  - [PRINCIPLE_5_NAME] → V. Phase-Scoped Simplicity
-- Added sections: Technology Constraints; Development Workflow
-- Removed sections: none
-- Deferred TODOs: none
-- Note: Principle V is derived from course-school-user-stories.md (Phase 1 scope),
-  not from the constitution command input.
-- Remove this comment before committing.
--->
-
 # LearnPath Constitution
 
 ## Core Principles
 
 ### I. Vertical Slice Delivery
 
-Every user story MUST be built end to end before the next story starts: the Express API
+Every user story MUST be built end to end before the next story starts: the API
 endpoint(s), the Angular screen(s), and the automated tests that cover it. A story is done
 only when all three exist, the tests pass, and the feature works through the real UI.
 Building a horizontal layer (for example, all endpoints first) ahead of the stories that
-use it is not allowed.
+use it is not allowed. Technical stories (TS-xx) have no screen; they are done when their
+acceptance criteria are tested and existing tests still pass.
 
 **Rationale**: each finished story is demonstrable and verifiable on its own, and
 integration problems surface per story instead of at the end.
@@ -55,8 +39,9 @@ weakness here compromises the whole platform.
 
 Roles (Guest, Student, Instructor, Admin) MUST be enforced in two places:
 
-- **API**: middleware MUST reject a missing or invalid token with `401` and a valid token
-  with the wrong role with `403`, on every protected endpoint.
+- **API**: an authentication guard MUST reject a missing or invalid token with `401`, and
+  a roles guard MUST reject a valid token with the wrong role with `403`, on every
+  protected endpoint. Allowed roles are declared on the endpoint itself (e.g. `@Roles(...)`).
 - **Angular**: route guards MUST block pages the current role cannot use, and navigation
   MUST only show items that role can reach.
 
@@ -78,10 +63,13 @@ justified in the feature plan.
 ## Technology Constraints
 
 - **Frontend**: Angular.
-- **Backend**: Node.js + Express, exposing a REST API with JSON request and response
-  bodies.
+- **Backend**: Node.js + NestJS, exposing a REST API with JSON request and response
+  bodies, organised as one NestJS module per feature.
 - **Database**: PostgreSQL.
 - **Authentication**: JWT.
+
+**Transition**: EP-01 was built on Express under version 1.0.0. TS-01 moves it to NestJS
+and MUST be completed before EP-02 starts. No new feature may be built on Express.
 
 Changing any item in this list is a constitution amendment (see Governance).
 
@@ -103,8 +91,9 @@ Constitution Check against these principles, and every review MUST verify compli
 Amendments are made by updating this file through `/speckit-constitution`, with the
 version bumped by semantic versioning:
 
-- **MAJOR**: a principle is removed or redefined in a backward-incompatible way.
+- **MAJOR**: a principle is removed or redefined in a backward-incompatible way, or a
+  Technology Constraint is changed.
 - **MINOR**: a principle or section is added, or guidance is materially expanded.
 - **PATCH**: clarifications and wording fixes with no change in meaning.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-30 | **Last Amended**: 2026-09-30
+**Version**: 2.0.0 | **Ratified**: 2026-09-30 | **Last Amended**: 2026-10-03
