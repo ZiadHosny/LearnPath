@@ -6,8 +6,8 @@ import { PASSWORD_RULE_MESSAGE } from '../../../lib/password.js';
 
 export class ChangePasswordDto {
   @ApiProperty({ example: 'Passw0rd!', maxLength: 200 })
-  @IsString({ message: 'Current password is required' })
-  @IsNotEmpty({ message: 'Current password is required' })
+  @IsString({ message: 'validation.currentPasswordRequired' })
+  @IsNotEmpty({ message: 'validation.currentPasswordRequired' })
   @MaxLength(200)
   currentPassword!: string;
 
@@ -16,7 +16,7 @@ export class ChangePasswordDto {
   newPassword!: string;
 
   @ApiProperty({ example: 'newpass22', description: 'Must equal newPassword' })
-  @IsString({ message: 'Passwords do not match' })
-  @Match('newPassword', { message: 'Passwords do not match' })
+  @IsString({ message: 'validation.passwordsMismatch' })
+  @Match('newPassword', { message: 'validation.passwordsMismatch' })
   confirmPassword!: string;
 }

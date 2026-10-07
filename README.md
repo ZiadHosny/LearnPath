@@ -69,13 +69,30 @@ Seed accounts, password `Passw0rd!`: `admin@learnpath.local`, `instructor@learnp
 
 PostgreSQL is published on port **5433** so it does not clash with a local PostgreSQL on 5432.
 
+## Languages
+
+English (default) and Arabic (right-to-left). The globe button in the header switches language;
+the choice is kept in the browser and, when signed in, on the account. The API answers in the
+language the app sends in `Accept-Language` (error codes never change).
+
+**Add a language** (e.g. French):
+
+1. `frontend/src/app/core/i18n/locales/fr.ts` — `export const fr: Translation = { … }` (copy `en.ts`).
+2. One line in `frontend/src/app/core/i18n/languages.ts` (`code`, `name`, `dir`, `locale`, `load`).
+3. `backend/src/i18n/locales/fr.ts` — `export const fr: Translation = { … }`.
+4. One line in `backend/src/i18n/languages.ts`.
+
+A missing key fails the type check and the build, and the tests list every key a language lacks.
+Texts: web app `frontend/src/app/core/i18n/locales/`, API `backend/src/i18n/locales/` (`errors.<CODE>`,
+`validation.*`, `messages.*`). Logs stay in English.
+
 ## HTTP responses and errors
 
 Everything that shapes a response lives in `backend/src/common/http/`:
 
 | To change… | Edit |
 |---|---|
-| An error's status or default message, or add an error code | `error-catalog.ts` (one entry per code; the docs follow it) |
+| An error's status, or add an error code | `error-catalog.ts` (one entry per code; the docs follow it); its text goes in `backend/src/i18n/locales/*.ts` → `errors.<CODE>` |
 | The error body or success body shape | `response-format.ts` (`toErrorBody`, `toSuccessBody`) |
 | Wrap successes in `{ "data": … }` | `RESPONSE_FORMAT.envelope = true` in `response-format.ts` — breaking for the web app |
 

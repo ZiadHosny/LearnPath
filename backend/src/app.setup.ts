@@ -5,6 +5,7 @@ import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';
 import { AppError } from './common/http/app-error.js';
 import { requestId } from './common/http/request-id.middleware.js';
+import { language } from './i18n/language.middleware.js';
 import { AppLogger } from './common/logging/app-logger.service.js';
 import { createRequestLogger } from './common/logging/request-logger.middleware.js';
 import { uploadsDir } from './config/paths.js';
@@ -16,7 +17,7 @@ const bodyParserErrors: ErrorRequestHandler = (err, _req, _res, next) => {
   const type = (err as { type?: string } | null)?.type;
   if (type === 'entity.parse.failed' || type === 'entity.too.large') {
     const status = (err as { status?: number }).status ?? 400;
-    next(new AppError('VALIDATION_ERROR', { status, message: 'Request body is not valid JSON' }));
+    next(new AppError('VALIDATION_ERROR', { status, messageKey: 'validation.invalidJson' }));
     return;
   }
   next(err);
@@ -48,6 +49,7 @@ export function configureApp(app: NestExpressApplication): NestExpressApplicatio
   app.setGlobalPrefix('api');
   app.disable('x-powered-by');
   app.use(requestId); // first, so every later log line and response has the id
+  app.use(language); // Accept-Language → req.language, Content-Language (EP-06)
   app.use(createRequestLogger(logger));
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-origin' } }));
   app.use(cookieParser());

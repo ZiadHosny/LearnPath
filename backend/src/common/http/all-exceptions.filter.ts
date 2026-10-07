@@ -25,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (error instanceof TooManyAttemptsError) {
       res.set('Retry-After', String(error.retryAfterSeconds));
     }
-    res.status(error.status).json(toErrorBody(error));
+    res.status(error.status).json(toErrorBody(error, req.language));
   }
 
   private toAppError(exception: unknown, req: Request): AppError {

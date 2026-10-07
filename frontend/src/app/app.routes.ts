@@ -4,20 +4,20 @@ import { HomeComponent } from './features/placeholders/home.component';
 import { PlaceholderComponent } from './features/placeholders/placeholder.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'LearnPath' },
+  { path: '', component: HomeComponent },
   {
     path: 'register',
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
-    title: 'Sign up · LearnPath',
+    title: 'titles.register',
   },
   {
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
-    title: 'Log in · LearnPath',
+    title: 'titles.login',
   },
   {
     path: 'forgot-password',
@@ -26,7 +26,7 @@ export const routes: Routes = [
       import('./features/auth/forgot-password/forgot-password.component').then(
         (m) => m.ForgotPasswordComponent,
       ),
-    title: 'Forgot password · LearnPath',
+    title: 'titles.forgotPassword',
   },
   {
     path: 'reset-password/:token',
@@ -34,14 +34,14 @@ export const routes: Routes = [
       import('./features/auth/reset-password/reset-password.component').then(
         (m) => m.ResetPasswordComponent,
       ),
-    title: 'Reset password · LearnPath',
+    title: 'titles.resetPassword',
   },
   {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/profile/profile/profile.component').then((m) => m.ProfileComponent),
-    title: 'My profile · LearnPath',
+    title: 'titles.profile',
   },
   {
     path: 'profile/password',
@@ -50,34 +50,34 @@ export const routes: Routes = [
       import('./features/profile/change-password/change-password.component').then(
         (m) => m.ChangePasswordComponent,
       ),
-    title: 'Change password · LearnPath',
+    title: 'titles.changePassword',
   },
   {
     path: 'catalog',
     component: PlaceholderComponent,
-    data: { title: 'Course catalog', epic: 'EP-02 Course catalog' },
-    title: 'Catalog · LearnPath',
+    data: { title: 'placeholder.catalog', epic: 'placeholder.ep02' },
+    title: 'titles.catalog',
   },
   {
     path: 'my-learning',
     canActivate: [roleGuard('STUDENT')],
     component: PlaceholderComponent,
-    data: { title: 'My Learning', epic: 'EP-04 Enrollment & learning' },
-    title: 'My Learning · LearnPath',
+    data: { title: 'titles.myLearning', epic: 'placeholder.ep04' },
+    title: 'titles.myLearning',
   },
   {
     path: 'my-courses',
     canActivate: [roleGuard('INSTRUCTOR')],
     component: PlaceholderComponent,
-    data: { title: 'My Courses', epic: 'EP-03 Instructor course management' },
-    title: 'My Courses · LearnPath',
+    data: { title: 'titles.myCourses', epic: 'placeholder.ep03' },
+    title: 'titles.myCourses',
   },
   {
     path: 'admin/dashboard',
     canActivate: [roleGuard('ADMIN')],
     component: PlaceholderComponent,
-    data: { title: 'Dashboard', epic: 'EP-05 Admin basics' },
-    title: 'Dashboard · LearnPath',
+    data: { title: 'titles.dashboard', epic: 'placeholder.ep05' },
+    title: 'titles.dashboard',
   },
   { path: '**', redirectTo: '' },
 ];

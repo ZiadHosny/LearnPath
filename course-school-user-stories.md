@@ -21,7 +21,7 @@ LearnPath is an online course school (tagline: "Your way to learn"). Phase 1 del
 
 ## Epics at a glance
 
-Phase 1 has 5 epics and 29 user stories (78 points), plus 4 technical stories (19 points); each epic below lists its stories in build order.
+Phase 1 has 6 epics and 31 user stories (86 points), plus 4 technical stories (19 points); each epic below lists its stories in build order.
 
 | Epic ID   | Epic                                  | Goal                                                         | Stories       | Count  | Points |
 | --------- | ------------------------------------- | ------------------------------------------------------------ | ------------- | ------ | ------ |
@@ -31,7 +31,8 @@ Phase 1 has 5 epics and 29 user stories (78 points), plus 4 technical stories (1
 | EP-03     | Instructor course & lesson management | Instructors build, structure and publish courses             | US-12 → US-18 | 7      | 19     |
 | EP-04     | Enrollment & learning                 | Students enroll, study lessons and track progress            | US-19 → US-24 | 6      | 16     |
 | EP-05     | Admin basics                          | Admin manages users, roles, categories and courses           | US-25 → US-29 | 5      | 13     |
-| **Total** |                                       |                                                              |               | **33** | **97** |
+| EP-06     | Languages                             | English (default) and Arabic, open to more languages         | US-30 → US-31 | 2      | 8      |
+| **Total** |                                       |                                                              |               | **35** | **105** |
 
 ## EP-01 · Epic: Authentication & accounts
 
@@ -329,7 +330,7 @@ As an **admin**, I want a simple dashboard, so that I can see how the school is 
 
 ## Build order & definition of done
 
-Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 → TS-04 (19 points).
+Build in this order so each sprint ends with something you can demo; Phase 1 totals 31 user stories (86 points) plus TS-01 → TS-04 (19 points).
 
 | Sprint | Goal                             | Stories                                                           | Points |
 | ------ | -------------------------------- | ----------------------------------------------------------------- | ------ |
@@ -339,6 +340,7 @@ Build in this order so each sprint ends with something you can demo; Phase 1 tot
 | 1c     | Align the API with NestJS 12     | TS-02                                                             | 5      |
 | 1d     | Colored, customizable logging    | TS-03                                                             | 3      |
 | 1e     | Global error handling & response | TS-04                                                             | 3      |
+| 1f     | English and Arabic               | US-30, US-31                                                      | 8      |
 | 2      | Instructors can start courses    | US-26, US-27, US-12, US-13, US-14                                 | 11     |
 | 3      | Courses have content and go live | US-15, US-16, US-17                                               | 10     |
 | 4      | Public catalog                   | US-08, US-09, US-11                                               | 8      |
@@ -357,11 +359,11 @@ Build in this order so each sprint ends with something you can demo; Phase 1 tot
 - [ ] Works on mobile width (375 px) and desktop
 - [ ] Code merged to main and running on the dev environment
 
-**Later phases (not in Phase 1):** payments and paid courses, quizzes and assignments, certificates, ratings and reviews, discussion / Q&A, notifications, Arabic/English (RTL) support.
+**Later phases (not in Phase 1):** payments and paid courses, quizzes and assignments, certificates, ratings and reviews, discussion / Q&A, notifications. (Arabic/English moved into Phase 1 as EP-06 on 2026-10-08.)
 
-## Proposed · EP-06 · Epic: Languages
+## EP-06 · Epic: Languages
 
-Proposed on 2026-10-07. Arabic/English is listed above as a later phase, so this epic is **not scheduled** until it is either moved into Phase 1 (update the epics table and build order) or kept for Phase 2.
+Moved into Phase 1 on 2026-10-08 and built right after the technical stories, before EP-02, so every new screen is translated from the start. Done 2026-10-08 (`specs/006-i18n-en-ar`).
 
 ### US-30 Use LearnPath in English or Arabic — Should · 5 pts
 

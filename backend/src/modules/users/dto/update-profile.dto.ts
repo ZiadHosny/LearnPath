@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, Length, MaxLength, ValidateIf } from 'class-validator';
+import { IsIn, IsOptional, IsString, Length, MaxLength, ValidateIf } from 'class-validator';
 import { Trim, TrimOrNull } from '../../../common/dto/transforms.js';
+import { LANGUAGE_CODES } from '../../../i18n/languages.js';
 
 // Unknown fields (including email) are refused by the global pipe.
 export class UpdateProfileDto {
@@ -8,8 +9,8 @@ export class UpdateProfileDto {
   @ApiPropertyOptional({ example: 'Ali Hassan', minLength: 2, maxLength: 100 })
   @ValidateIf((_object, value) => value !== undefined)
   @Trim()
-  @IsString({ message: 'Full name must be 2–100 characters' })
-  @Length(2, 100, { message: 'Full name must be 2–100 characters' })
+  @IsString({ message: 'validation.fullNameLength' })
+  @Length(2, 100, { message: 'validation.fullNameLength' })
   fullName?: string;
 
   // Optional; null or an empty string clears it.
@@ -17,6 +18,12 @@ export class UpdateProfileDto {
   @IsOptional()
   @TrimOrNull()
   @IsString()
-  @MaxLength(500, { message: 'Bio must be 500 characters or fewer' })
+  @MaxLength(500, { message: 'validation.bioTooLong' })
   bio?: string | null;
+
+  // Optional preferred language (EP-06); one of the listed codes, or null to clear it.
+  @ApiPropertyOptional({ enum: LANGUAGE_CODES, nullable: true, example: 'ar' })
+  @IsOptional()
+  @IsIn(LANGUAGE_CODES, { message: 'validation.languageInvalid' })
+  language?: string | null;
 }

@@ -7,12 +7,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { messageFor } from '../../../core/api/api-error';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PasswordResetService } from '../password-reset.service';
 
 @Component({
   selector: 'app-forgot-password',
   imports: [
     ReactiveFormsModule,
+    TranslatePipe,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -22,6 +25,7 @@ import { PasswordResetService } from '../password-reset.service';
   templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent {
+  protected readonly i18n = inject(I18nService);
   private readonly passwordReset = inject(PasswordResetService);
 
   protected readonly pending = signal(false);
@@ -43,7 +47,7 @@ export class ForgotPasswordComponent {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: (response) => this.sentMessage.set(response.message),
-        error: (error) => this.serverError.set(messageFor(error)),
+        error: (error) => this.serverError.set(messageFor(error, this.i18n)),
       });
   }
 }

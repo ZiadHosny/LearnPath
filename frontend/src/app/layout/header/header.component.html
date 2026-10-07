@@ -1,31 +1,33 @@
 <mat-toolbar class="toolbar">
-  <a class="logo" routerLink="/">LearnPath</a>
+  <a class="logo" routerLink="/">{{ 'app.name' | t }}</a>
   <span class="spacer"></span>
 
-  <nav class="links" aria-label="Main">
+  <nav class="links" [attr.aria-label]="'nav.main' | t">
     @for (link of links(); track link.path) {
-      <a mat-button [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+      <a mat-button [routerLink]="link.path" routerLinkActive="active">{{ link.label | t }}</a>
     }
     @if (auth.isLoggedIn()) {
-      <button mat-button type="button" data-test="logout" (click)="logout()">Log out</button>
+      <button mat-button type="button" data-test="logout" (click)="logout()">{{ 'nav.logout' | t }}</button>
     } @else {
-      <a mat-button routerLink="/login" routerLinkActive="active">Log in</a>
-      <a mat-flat-button routerLink="/register">Sign up</a>
+      <a mat-button routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
+      <a mat-flat-button routerLink="/register">{{ 'nav.signup' | t }}</a>
     }
   </nav>
 
-  <button mat-icon-button class="menu-button" [matMenuTriggerFor]="mobileMenu" aria-label="Open menu">
+  <app-language-switch />
+
+  <button mat-icon-button class="menu-button" [matMenuTriggerFor]="mobileMenu" [attr.aria-label]="'nav.openMenu' | t">
     <mat-icon>menu</mat-icon>
   </button>
   <mat-menu #mobileMenu="matMenu">
     @for (link of links(); track link.path) {
-      <a mat-menu-item [routerLink]="link.path">{{ link.label }}</a>
+      <a mat-menu-item [routerLink]="link.path">{{ link.label | t }}</a>
     }
     @if (auth.isLoggedIn()) {
-      <button mat-menu-item type="button" (click)="logout()">Log out</button>
+      <button mat-menu-item type="button" (click)="logout()">{{ 'nav.logout' | t }}</button>
     } @else {
-      <a mat-menu-item routerLink="/login">Log in</a>
-      <a mat-menu-item routerLink="/register">Sign up</a>
+      <a mat-menu-item routerLink="/login">{{ 'nav.login' | t }}</a>
+      <a mat-menu-item routerLink="/register">{{ 'nav.signup' | t }}</a>
     }
   </mat-menu>
 </mat-toolbar>

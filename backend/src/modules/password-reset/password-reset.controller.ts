@@ -8,12 +8,16 @@ import {
 } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { ApiErrors } from '../../common/dto/error-response.dto.js';
+import { Lang } from '../../i18n/language.middleware.js';
+import type { LanguageCode } from '../../i18n/languages.js';
+import { en } from '../../i18n/locales/en.js';
+import { t } from '../../i18n/translate.js';
 import { ResetConfirmDto } from './dto/reset-confirm.dto.js';
 import { ResetRequestDto } from './dto/reset-request.dto.js';
 import { ResetTokenParams } from './dto/reset-token.params.js';
 import { PasswordResetService } from './password-reset.service.js';
 
-const SENT_MESSAGE = 'If an account exists for this email, a reset link has been sent.';
+const SENT_MESSAGE = en.messages.resetLinkSent; // English example for the API docs
 
 // Static routes are declared before ':token' so they are never read as a token.
 @ApiTags('Password reset')
@@ -30,9 +34,9 @@ export class PasswordResetController {
     schema: { type: 'object', properties: { message: { type: 'string', example: SENT_MESSAGE } } },
   })
   @ApiErrors('VALIDATION_ERROR')
-  async request(@Body() body: ResetRequestDto) {
+  async request(@Body() body: ResetRequestDto, @Lang() lang: LanguageCode) {
     await this.passwordReset.request(body.email);
-    return { message: SENT_MESSAGE };
+    return { message: t(lang, 'messages.resetLinkSent') };
   }
 
   @Post('confirm')

@@ -23,7 +23,7 @@ export class UsersService {
   updateProfile(userId: string, input: UpdateProfileDto) {
     return this.prisma.user.update({
       where: { id: userId },
-      data: { fullName: input.fullName, bio: input.bio },
+      data: { fullName: input.fullName, bio: input.bio, language: input.language },
     });
   }
 

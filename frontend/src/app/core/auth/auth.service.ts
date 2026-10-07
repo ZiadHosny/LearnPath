@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, finalize, map, of, shareReplay, tap } from 'rxjs';
+import { I18nService } from '../i18n/i18n.service';
 import { AuthResponse, User } from './auth.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly i18n = inject(I18nService);
   private refreshInFlight: Observable<string> | null = null;
 
   // The access token lives only in memory; the long-lived refresh credential is an HttpOnly cookie.
@@ -66,6 +68,17 @@ export class AuthService {
   setSession(response: AuthResponse): void {
     this.accessToken.set(response.accessToken);
     this.user.set(response.user);
+    // The language saved on the account wins at sign-in (EP-06).
+    const language = response.user.language;
+    if (language && language !== this.i18n.language()) void this.i18n.use(language);
+  }
+
+  // Saves the chosen language on the account (EP-06).
+  saveLanguage(language: string): Observable<void> {
+    return this.http.patch<User>('/api/users/me', { language }).pipe(
+      tap((user) => this.user.set(user)),
+      map(() => undefined),
+    );
   }
 
   clear(): void {

@@ -7,4 +7,6 @@ export class UserResponseDto {
   @ApiProperty({ enum: ['STUDENT', 'INSTRUCTOR', 'ADMIN'], example: 'STUDENT' }) role!: string;
   @ApiProperty({ type: String, nullable: true, example: '/uploads/avatars/<file>.png' }) photoUrl!: string | null;
   @ApiProperty({ type: String, nullable: true }) bio!: string | null;
+  @ApiProperty({ type: String, nullable: true, example: 'ar', description: 'Preferred language; null = not chosen' })
+  language!: string | null;
 }

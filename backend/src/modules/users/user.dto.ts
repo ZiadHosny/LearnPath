@@ -8,6 +8,7 @@ export interface UserDto {
   role: Role;
   photoUrl: string | null;
   bio: string | null;
+  language: string | null;
 }
 
 interface UserLike {
@@ -17,6 +18,7 @@ interface UserLike {
   role: Role;
   photoPath: string | null;
   bio: string | null;
+  language: string | null;
 }
 
 export function toUserDto(user: UserLike): UserDto {
@@ -27,5 +29,6 @@ export function toUserDto(user: UserLike): UserDto {
     role: user.role,
     photoUrl: user.photoPath ? `/uploads/avatars/${path.basename(user.photoPath)}` : null,
     bio: user.bio,
+    language: user.language,
   };
 }

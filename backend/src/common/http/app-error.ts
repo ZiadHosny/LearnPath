@@ -1,31 +1,40 @@
-import { ERROR_CATALOG, type ErrorCode } from './error-catalog.js';
+import { t } from '../../i18n/translate.js';
+import { ERROR_CATALOG, errorMessage, type ErrorCode } from './error-catalog.js';
 
 export type { ErrorCode } from './error-catalog.js';
 
+// `message` in a detail may be a translation key (e.g. 'validation.passwordsMismatch'); it is
+// translated into the request's language when the response is built.
 export interface ErrorDetail {
   field: string;
   message: string;
 }
 
 export interface AppErrorOptions {
-  message?: string; // overrides the catalog message for this one error
+  messageKey?: string; // a translation key that replaces errors.<CODE> for this one error
+  message?: string; // a fixed text (not translated); prefer messageKey
   details?: ErrorDetail[];
   status?: number; // only for errors whose status depends on the cause (e.g. body parser 413)
 }
 
-// An API error. Status and default message come from ERROR_CATALOG.
+// An API error. Status from ERROR_CATALOG; text from the translation files.
+// `message` is the English text (for logs); responses are translated per request.
 export class AppError extends Error {
   readonly status: number;
   readonly details?: ErrorDetail[];
+  readonly messageKey?: string;
+  readonly fixedMessage?: string;
 
   constructor(
     public readonly code: ErrorCode,
     options: AppErrorOptions = {},
   ) {
-    super(options.message ?? ERROR_CATALOG[code].message);
+    super(options.message ?? (options.messageKey ? t('en', options.messageKey) : errorMessage(code)));
     this.name = 'AppError';
     this.status = options.status ?? ERROR_CATALOG[code].status;
     this.details = options.details;
+    this.messageKey = options.messageKey;
+    this.fixedMessage = options.message;
   }
 }
 
@@ -36,7 +45,7 @@ export class TooManyAttemptsError extends AppError {
   }
 }
 
-// Shortcuts used across the code base; all of them read the catalog.
+// Shortcuts used across the code base.
 export const Errors = {
   unauthenticated: () => new AppError('UNAUTHENTICATED'),
   forbidden: () => new AppError('FORBIDDEN'),

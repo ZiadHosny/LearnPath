@@ -1,5 +1,5 @@
 <section class="form-page">
-  <h1>Log in</h1>
+  <h1>{{ 'auth.login.title' | t }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     @if (error()) {
@@ -7,33 +7,33 @@
     }
 
     <mat-form-field class="full-width">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" formControlName="email" autocomplete="email" />
+      <mat-label>{{ 'form.email' | t }}</mat-label>
+      <input matInput type="email" formControlName="email" autocomplete="email" dir="ltr" />
       @if (form.controls.email.hasError('required')) {
-        <mat-error>Email is required</mat-error>
+        <mat-error>{{ 'validation.emailRequired' | t }}</mat-error>
       } @else if (form.controls.email.invalid) {
-        <mat-error>Enter a valid email</mat-error>
+        <mat-error>{{ 'validation.emailInvalid' | t }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field class="full-width">
-      <mat-label>Password</mat-label>
+      <mat-label>{{ 'form.password' | t }}</mat-label>
       <input matInput type="password" formControlName="password" autocomplete="current-password" />
       @if (form.controls.password.hasError('required')) {
-        <mat-error>Password is required</mat-error>
+        <mat-error>{{ 'validation.passwordRequired' | t }}</mat-error>
       }
     </mat-form-field>
 
-    <p class="forgot"><a routerLink="/forgot-password">Forgot password?</a></p>
+    <p class="forgot"><a routerLink="/forgot-password">{{ 'auth.login.forgot' | t }}</a></p>
 
     <button mat-flat-button class="full-width" type="submit" [disabled]="pending()">
       @if (pending()) {
         <mat-spinner diameter="20" />
       } @else {
-        Log in
+        {{ 'auth.login.submit' | t }}
       }
     </button>
   </form>
 
-  <p>New here? <a routerLink="/register">Create an account</a></p>
+  <p>{{ 'auth.login.newHere' | t }} <a routerLink="/register">{{ 'auth.login.createAccount' | t }}</a></p>
 </section>

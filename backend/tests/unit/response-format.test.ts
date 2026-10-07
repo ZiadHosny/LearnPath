@@ -1,5 +1,5 @@
 import { AppError, Errors } from '../../src/common/http/app-error.js';
-import { ERROR_CATALOG, type ErrorCode } from '../../src/common/http/error-catalog.js';
+import { ERROR_CATALOG, errorMessage, type ErrorCode } from '../../src/common/http/error-catalog.js';
 import {
   configureResponseFormat,
   RESPONSE_FORMAT,
@@ -8,11 +8,11 @@ import {
 } from '../../src/common/http/response-format.js';
 
 describe('TS-04 US1 error catalog', () => {
-  it.each(Object.keys(ERROR_CATALOG) as ErrorCode[])('%s takes its status and message from the catalog', (code) => {
+  it.each(Object.keys(ERROR_CATALOG) as ErrorCode[])('%s takes its status from the catalog and its English text from en.ts', (code) => {
     const error = new AppError(code);
     expect(error.code).toBe(code);
     expect(error.status).toBe(ERROR_CATALOG[code].status);
-    expect(error.message).toBe(ERROR_CATALOG[code].message);
+    expect(error.message).toBe(errorMessage(code));
   });
 
   it('lets a call site override only the message (and details)', () => {
@@ -26,7 +26,7 @@ describe('TS-04 US1 error catalog', () => {
   });
 
   it('keeps the Errors.* shortcuts tied to the catalog', () => {
-    expect(Errors.emailTaken()).toMatchObject({ status: 409, code: 'EMAIL_TAKEN', message: ERROR_CATALOG.EMAIL_TAKEN.message });
+    expect(Errors.emailTaken()).toMatchObject({ status: 409, code: 'EMAIL_TAKEN', message: errorMessage('EMAIL_TAKEN') });
     expect(Errors.notFound()).toMatchObject({ status: 404, code: 'NOT_FOUND' });
   });
 });

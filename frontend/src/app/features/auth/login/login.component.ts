@@ -7,6 +7,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { messageFor } from '../../../core/api/api-error';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { AuthService } from '../../../core/auth/auth.service';
 import { roleHome } from '../../../core/auth/role-home';
 
@@ -14,6 +16,7 @@ import { roleHome } from '../../../core/auth/role-home';
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
+    TranslatePipe,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -23,6 +26,7 @@ import { roleHome } from '../../../core/auth/role-home';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
+  protected readonly i18n = inject(I18nService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -33,7 +37,7 @@ export class LoginComponent {
   protected readonly pending = signal(false);
   private readonly submitError = signal<string | null>(null);
   protected readonly error = computed(
-    () => this.submitError() ?? (this.reason() === 'blocked' ? 'Account blocked' : null),
+    () => this.submitError() ?? (this.reason() === 'blocked' ? this.i18n.t('errors.ACCOUNT_BLOCKED') : null),
   );
 
   protected readonly form = inject(NonNullableFormBuilder).group({
@@ -53,7 +57,7 @@ export class LoginComponent {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: (user) => void this.router.navigateByUrl(this.safeReturnUrl() ?? roleHome(user.role)),
-        error: (error) => this.submitError.set(messageFor(error)),
+        error: (error) => this.submitError.set(messageFor(error, this.i18n)),
       });
   }
 

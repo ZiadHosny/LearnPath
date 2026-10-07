@@ -7,13 +7,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { messageFor } from '../../../core/api/api-error';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { AuthService } from '../../../core/auth/auth.service';
-import { PASSWORD_RULE_MESSAGE, matchFields, passwordRule } from '../../../core/forms/validators';
+import { matchFields, passwordRule } from '../../../core/forms/validators';
 
 @Component({
   selector: 'app-register',
   imports: [
     ReactiveFormsModule,
+    TranslatePipe,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -23,10 +26,9 @@ import { PASSWORD_RULE_MESSAGE, matchFields, passwordRule } from '../../../core/
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
+  protected readonly i18n = inject(I18nService);
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
-
-  protected readonly passwordRuleMessage = PASSWORD_RULE_MESSAGE;
+  private readonly router = inject(Router);
   protected readonly pending = signal(false);
   protected readonly serverError = signal<string | null>(null);
 
@@ -52,7 +54,7 @@ export class RegisterComponent {
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
         next: () => void this.router.navigateByUrl('/catalog'),
-        error: (error) => this.serverError.set(messageFor(error)),
+        error: (error) => this.serverError.set(messageFor(error, this.i18n)),
       });
   }
 }

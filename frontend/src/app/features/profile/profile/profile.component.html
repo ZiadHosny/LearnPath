@@ -1,21 +1,21 @@
 <section class="form-page">
-  <h1>My profile</h1>
+  <h1>{{ 'profile.title' | t }}</h1>
 
   @if (loading()) {
     <div class="center"><mat-spinner diameter="40" /></div>
   } @else if (loadError()) {
     <p class="form-error" role="alert">{{ loadError() }}</p>
-    <button mat-stroked-button type="button" (click)="load()">Try again</button>
+    <button mat-stroked-button type="button" (click)="load()">{{ 'profile.tryAgain' | t }}</button>
   } @else if (me(); as user) {
     <div class="photo-row">
       @if (user.photoUrl) {
-        <img class="avatar" [src]="user.photoUrl" alt="Profile photo" />
+        <img class="avatar" [src]="user.photoUrl" [alt]="'profile.photoAlt' | t" />
       } @else {
         <div class="avatar placeholder" aria-hidden="true">{{ user.fullName.charAt(0) }}</div>
       }
       <div>
         <button mat-stroked-button type="button" [disabled]="uploading()" (click)="photoInput.click()">
-          {{ uploading() ? 'Uploading…' : 'Change photo' }}
+          {{ (uploading() ? 'profile.uploading' : 'profile.changePhoto') | t }}
         </button>
         <input
           #photoInput
@@ -24,7 +24,7 @@
           hidden
           (change)="onPhotoSelected($event)"
         />
-        <p class="hint">JPG or PNG, up to 2 MB</p>
+        <p class="hint">{{ 'profile.photoHint' | t }}</p>
       </div>
     </div>
     @if (photoError()) {
@@ -37,34 +37,34 @@
       }
 
       <mat-form-field class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput data-test="email" [value]="user.email" readonly />
-        <mat-hint>Email cannot be changed</mat-hint>
+        <mat-label>{{ 'form.email' | t }}</mat-label>
+        <input matInput data-test="email" [value]="user.email" readonly dir="ltr" />
+        <mat-hint>{{ 'profile.emailLocked' | t }}</mat-hint>
       </mat-form-field>
 
       <mat-form-field class="full-width">
-        <mat-label>Full name</mat-label>
+        <mat-label>{{ 'form.fullName' | t }}</mat-label>
         <input matInput formControlName="fullName" autocomplete="name" />
         @if (form.controls.fullName.invalid) {
-          <mat-error>Full name must be 2–100 characters</mat-error>
+          <mat-error>{{ 'validation.fullNameLength' | t }}</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field class="full-width">
-        <mat-label>Short bio</mat-label>
+        <mat-label>{{ 'form.shortBio' | t }}</mat-label>
         <textarea matInput formControlName="bio" rows="4" maxlength="500"></textarea>
-        <mat-hint align="end">{{ form.controls.bio.value.length }} / 500</mat-hint>
+        <mat-hint align="end">{{ i18n.number(form.controls.bio.value.length) }} / {{ i18n.number(500) }}</mat-hint>
       </mat-form-field>
 
       <button mat-flat-button class="full-width" type="submit" [disabled]="saving()">
         @if (saving()) {
           <mat-spinner diameter="20" />
         } @else {
-          Save changes
+          {{ 'profile.save' | t }}
         }
       </button>
     </form>
 
-    <p><a routerLink="/profile/password">Change password</a></p>
+    <p><a routerLink="/profile/password">{{ 'profile.changePassword' | t }}</a></p>
   }
 </section>
