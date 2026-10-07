@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { CookieOptions, Response } from 'express';
-import { Errors } from '../../common/errors.js';
+import { Errors } from '../../common/http/app-error.js';
 import { AppLogger } from '../../common/logging/app-logger.service.js';
 import type { EnvironmentVariables } from '../../config/env.validation.js';
 import { DAY, now } from '../../lib/clock.js';

@@ -7,7 +7,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator.js';
-import { ApiError } from '../../common/dto/error-response.dto.js';
+import { ApiErrors } from '../../common/dto/error-response.dto.js';
 import { ResetConfirmDto } from './dto/reset-confirm.dto.js';
 import { ResetRequestDto } from './dto/reset-request.dto.js';
 import { ResetTokenParams } from './dto/reset-token.params.js';
@@ -29,7 +29,7 @@ export class PasswordResetController {
     description: 'Always the same message',
     schema: { type: 'object', properties: { message: { type: 'string', example: SENT_MESSAGE } } },
   })
-  @ApiError(400, 'Some fields are invalid', 'VALIDATION_ERROR')
+  @ApiErrors('VALIDATION_ERROR')
   async request(@Body() body: ResetRequestDto) {
     await this.passwordReset.request(body.email);
     return { message: SENT_MESSAGE };
@@ -39,8 +39,8 @@ export class PasswordResetController {
   @HttpCode(204)
   @ApiOperation({ summary: 'Set a new password with a reset link; all devices are signed out (US-07)' })
   @ApiNoContentResponse({ description: 'Password reset' })
-  @ApiError(400, 'Some fields are invalid', 'VALIDATION_ERROR')
-  @ApiError(410, 'Link expired', 'LINK_EXPIRED')
+  @ApiErrors('VALIDATION_ERROR')
+  @ApiErrors('LINK_EXPIRED')
   async confirm(@Body() body: ResetConfirmDto): Promise<void> {
     await this.passwordReset.confirm(body.token, body.newPassword);
   }
@@ -51,7 +51,7 @@ export class PasswordResetController {
     description: 'Link is valid',
     schema: { type: 'object', properties: { valid: { type: 'boolean', example: true } } },
   })
-  @ApiError(410, 'Link expired', 'LINK_EXPIRED')
+  @ApiErrors('LINK_EXPIRED')
   async check(@Param() params: ResetTokenParams) {
     await this.passwordReset.check(params.token);
     return { valid: true };

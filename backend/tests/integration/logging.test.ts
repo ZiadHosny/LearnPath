@@ -70,7 +70,8 @@ describe('TS-03 US3 account event logs', () => {
     await api.get('/api/users/me').expect(401);
     await api.post('/api/auth/login').send({ email: 'nobody@example.com', password: 'x1234567' }).expect(401);
     const requestLines = lines.filter((l) => l.line.includes('[HTTP]'));
-    expect(requestLines.map((l) => l.line.replace(/^.*\[HTTP\] /, '').replace(/ \d+ms$/, ''))).toEqual([
+    // Keep "METHOD path status"; drop the duration and fields such as requestId (TS-04).
+    expect(requestLines.map((l) => l.line.replace(/^.*\[HTTP\] /, '').replace(/ \d+ms.*$/, ''))).toEqual([
       'GET /api/users/me 401',
       'POST /api/auth/login 401',
     ]);

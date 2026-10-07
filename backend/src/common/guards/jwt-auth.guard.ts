@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
 import { verifyAccessToken } from '../../lib/tokens.js';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator.js';
-import { Errors } from '../errors.js';
+import { Errors } from '../http/app-error.js';
 
 // Global guard: every endpoint needs a valid access token unless marked @Public().
 @Injectable()

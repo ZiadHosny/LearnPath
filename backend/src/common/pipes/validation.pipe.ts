@@ -1,5 +1,5 @@
 import { ValidationPipe, type ValidationError } from '@nestjs/common';
-import { AppError, type ErrorDetail } from '../errors.js';
+import { AppError, type ErrorDetail } from '../http/app-error.js';
 
 function toDetails(errors: ValidationError[], parent = ''): ErrorDetail[] {
   return errors.flatMap((error) => {
@@ -17,6 +17,6 @@ export function createValidationPipe(): ValidationPipe {
     forbidNonWhitelisted: true,
     transform: true,
     exceptionFactory: (errors) =>
-      new AppError(400, 'VALIDATION_ERROR', 'Some fields are invalid', toDetails(errors)),
+      new AppError('VALIDATION_ERROR', { details: toDetails(errors) }),
   });
 }

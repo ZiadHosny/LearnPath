@@ -30,7 +30,12 @@ describe('US3 project structure', () => {
     for (const file of [
       'src/common/guards/jwt-auth.guard.ts',
       'src/common/guards/roles.guard.ts',
-      'src/common/filters/all-exceptions.filter.ts',
+      'src/common/http/all-exceptions.filter.ts',
+      'src/common/http/error-catalog.ts',
+      'src/common/http/response-format.ts',
+      'src/common/http/response.interceptor.ts',
+      'src/common/http/request-id.middleware.ts',
+      'src/common/logging/app-logger.service.ts',
       'src/common/pipes/validation.pipe.ts',
       'src/prisma/prisma.module.ts',
       'src/mail/mail.module.ts',

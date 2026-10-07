@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Errors, TooManyAttemptsError } from '../../common/errors.js';
+import { Errors, TooManyAttemptsError } from '../../common/http/app-error.js';
 import { AppLogger } from '../../common/logging/app-logger.service.js';
 import { Prisma } from '../../generated/prisma/client.js';
 import { hashPassword, verifyAgainstDummy, verifyPassword } from '../../lib/password.js';

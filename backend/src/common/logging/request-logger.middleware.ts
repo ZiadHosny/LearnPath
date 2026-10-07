@@ -25,6 +25,7 @@ export function createRequestLogger(logger: AppLogger): RequestHandler {
       const level = levelFor(res.statusCode);
       logger[level](`${req.method} ${safePath(req.originalUrl)} ${res.statusCode} ${ms}ms`, {
         context: 'HTTP',
+        ...(req.requestId ? { requestId: req.requestId } : {}),
       });
     });
     next();

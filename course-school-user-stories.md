@@ -21,17 +21,17 @@ LearnPath is an online course school (tagline: "Your way to learn"). Phase 1 del
 
 ## Epics at a glance
 
-Phase 1 has 5 epics and 29 user stories (78 points), plus 3 technical stories (16 points); each epic below lists its stories in build order.
+Phase 1 has 5 epics and 29 user stories (78 points), plus 4 technical stories (19 points); each epic below lists its stories in build order.
 
 | Epic ID   | Epic                                  | Goal                                                         | Stories       | Count  | Points |
 | --------- | ------------------------------------- | ------------------------------------------------------------ | ------------- | ------ | ------ |
 | EP-01     | Authentication & accounts             | Users register, log in and reach only what their role allows | US-01 → US-07 | 7      | 19     |
-| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01 → TS-03 | 3      | 16     |
+| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01 → TS-04 | 4      | 19     |
 | EP-02     | Course catalog                        | Visitors find and evaluate published courses                 | US-08 → US-11 | 4      | 11     |
 | EP-03     | Instructor course & lesson management | Instructors build, structure and publish courses             | US-12 → US-18 | 7      | 19     |
 | EP-04     | Enrollment & learning                 | Students enroll, study lessons and track progress            | US-19 → US-24 | 6      | 16     |
 | EP-05     | Admin basics                          | Admin manages users, roles, categories and courses           | US-25 → US-29 | 5      | 13     |
-| **Total** |                                       |                                                              |               | **32** | **94** |
+| **Total** |                                       |                                                              |               | **33** | **97** |
 
 ## EP-01 · Epic: Authentication & accounts
 
@@ -131,6 +131,16 @@ As the **development team**, I want one global, colored logger with clear levels
 - Every API request is logged with method, path, status and duration, colored by status; bodies, headers, passwords and tokens are never logged (tokens in paths are masked).
 - Account events are logged with their story tag: sign-up, login (success and failure), logout, password change, reset requested and done, using the user id only (no email, password or token).
 - No change to API behaviour or responses.
+
+### TS-04 Global error handling and response format — Must · 3 pts
+
+As the **development team**, I want every API response, success or error, shaped in one place, so that changing the format, an error message or a status code is a one-file change.
+
+- Every error code is defined once (status and default message) in one catalog; code throws errors by code.
+- Every error response and every success response is built by one response-format file; today's shapes stay the default, so the web app does not change.
+- Wrapping success responses in an envelope (`{ "data": … }`) is one setting in that file (the web app must then be updated).
+- Every response carries an `X-Request-Id` header, the same id appears in the request and error log lines, and a caller-supplied id is kept.
+- Unexpected errors still return the generic 500 body and are logged once with the request id and stack, never with request bodies.
 
 ## EP-02 · Epic: Course catalog
 
@@ -319,7 +329,7 @@ As an **admin**, I want a simple dashboard, so that I can see how the school is 
 
 ## Build order & definition of done
 
-Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 → TS-03 (16 points).
+Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 → TS-04 (19 points).
 
 | Sprint | Goal                             | Stories                                                           | Points |
 | ------ | -------------------------------- | ----------------------------------------------------------------- | ------ |
@@ -328,6 +338,7 @@ Build in this order so each sprint ends with something you can demo; Phase 1 tot
 | 1b     | Move the API to NestJS           | TS-01                                                             | 8      |
 | 1c     | Align the API with NestJS 12     | TS-02                                                             | 5      |
 | 1d     | Colored, customizable logging    | TS-03                                                             | 3      |
+| 1e     | Global error handling & response | TS-04                                                             | 3      |
 | 2      | Instructors can start courses    | US-26, US-27, US-12, US-13, US-14                                 | 11     |
 | 3      | Courses have content and go live | US-15, US-16, US-17                                               | 10     |
 | 4      | Public catalog                   | US-08, US-09, US-11                                               | 8      |
@@ -347,3 +358,26 @@ Build in this order so each sprint ends with something you can demo; Phase 1 tot
 - [ ] Code merged to main and running on the dev environment
 
 **Later phases (not in Phase 1):** payments and paid courses, quizzes and assignments, certificates, ratings and reviews, discussion / Q&A, notifications, Arabic/English (RTL) support.
+
+## Proposed · EP-06 · Epic: Languages
+
+Proposed on 2026-10-07. Arabic/English is listed above as a later phase, so this epic is **not scheduled** until it is either moved into Phase 1 (update the epics table and build order) or kept for Phase 2.
+
+### US-30 Use LearnPath in English or Arabic — Should · 5 pts
+
+As a **visitor or user**, I want to choose English or Arabic, so that I can use LearnPath in the language I read best.
+
+- English is the default and the fallback language; Arabic is available from the first release.
+- A language switch is always visible; the choice is remembered for the next visit (and on the account once logged in).
+- Arabic shows right-to-left (layout, alignment, icons that point a direction), English left-to-right.
+- Every screen text, validation message and API error message appears in the chosen language; a missing Arabic text falls back to English instead of showing a key.
+- Dates and numbers use the chosen language's format.
+- The API answers in the language the app asks for (`Accept-Language`), defaulting to English; error codes stay the same in every language.
+
+### US-31 Add a new language without code changes — Could · 3 pts
+
+As the **development team**, I want to add a language by adding its translation files and one line of settings, so that LearnPath can grow beyond English and Arabic.
+
+- Each language is one translation file per app part (web app, API), with the same keys as English.
+- A language is registered in one settings list (code, name, direction LTR/RTL); the switch shows it automatically.
+- A check fails the build when a language file misses keys that English has, and lists them.

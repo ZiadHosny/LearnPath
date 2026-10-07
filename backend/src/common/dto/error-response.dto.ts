@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional, ApiResponse } from '@nestjs/swagger';
-import type { ErrorCode } from '../errors.js';
+import { ERROR_CATALOG, type ErrorCode } from '../http/error-catalog.js';
 
 class ErrorDetailDto {
   @ApiProperty({ example: 'email' }) field!: string;
@@ -14,17 +14,26 @@ class ErrorBodyDto {
   details?: ErrorDetailDto[];
 }
 
-// The one error shape every endpoint uses.
+// The one error shape every endpoint uses (built by common/http/response-format.ts).
 export class ErrorResponseDto {
   @ApiProperty({ type: ErrorBodyDto }) error!: ErrorBodyDto;
 }
 
-// Documents one error status with its codes, e.g. ApiError(409, 'Email already registered', 'EMAIL_TAKEN').
-export const ApiError = (status: number, description: string, ...codes: ErrorCode[]) =>
-  applyDecorators(
-    ApiResponse({
-      status,
-      description: codes.length ? `${description} (${codes.join(', ')})` : description,
-      type: ErrorResponseDto,
-    }),
+// Documents the errors an endpoint can return, by code. Status and text come from
+// ERROR_CATALOG, so the docs change with it: ApiErrors('VALIDATION_ERROR', 'EMAIL_TAKEN').
+export const ApiErrors = (...codes: ErrorCode[]) => {
+  const byStatus = new Map<number, ErrorCode[]>();
+  for (const code of codes) {
+    const status = ERROR_CATALOG[code].status;
+    byStatus.set(status, [...(byStatus.get(status) ?? []), code]);
+  }
+  return applyDecorators(
+    ...[...byStatus].map(([status, group]) =>
+      ApiResponse({
+        status,
+        type: ErrorResponseDto,
+        description: group.map((code) => `${code}: ${ERROR_CATALOG[code].message}`).join(' · '),
+      }),
+    ),
   );
+};
