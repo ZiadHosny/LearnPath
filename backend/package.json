@@ -2,18 +2,26 @@
   "name": "learnpath-backend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "test": "vitest run",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate dev && prisma generate",
     "db:generate": "prisma generate",
     "db:seed": "prisma db seed",
     "postinstall": "prisma generate",
-    "openapi": "nest start --entryFile openapi-export"
+    "openapi": "nest start --entryFile openapi-export",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main.js",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "test:e2e": "vitest run",
+    "format": "prettier --write src/**/*.ts tests/**/*.ts"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.2",
@@ -32,7 +40,8 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
     "nodemailer": "^10.0.13",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",
@@ -42,22 +51,22 @@
     "@nestjs/testing": "^12.1.2",
     "@swc/cli": "^0.8.1",
     "@swc/core": "^1.16.13",
-    "@swc/jest": "^0.2.39",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
-    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.3",
     "@types/nodemailer": "^8.0.2",
     "@types/supertest": "^7.2.1",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^10.11.0",
-    "jest": "^30.5.2",
+    "prettier": "^3.9.9",
     "prisma": "^7.10.0",
     "supertest": "^7.3.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.0"
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^4.1.11"
   }
 }

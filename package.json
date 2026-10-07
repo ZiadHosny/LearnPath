@@ -20,7 +20,10 @@
     "test:web": "npm --prefix frontend test -- --watch=false",
     "lint": "npm --prefix backend run lint && npm --prefix backend run typecheck && npm --prefix frontend run ng -- lint",
     "build": "npm --prefix backend run build && npm --prefix frontend run build",
-    "openapi": "npm --prefix backend run openapi"
+    "openapi": "npm --prefix backend run openapi",
+    "test:e2e": "npm --prefix backend run test:e2e",
+    "test:cov": "npm --prefix backend run test:cov",
+    "format": "npm --prefix backend run format"
   },
   "devDependencies": {
     "concurrently": "^10.0.5"
