@@ -7,7 +7,7 @@ import { configureApp } from './app.setup.js';
 import { env } from './config/env.validation.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bodyParser: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bodyParser: false, bufferLogs: true });
   configureApp(app);
   app.enableShutdownHooks();
   await app.listen(env.PORT);

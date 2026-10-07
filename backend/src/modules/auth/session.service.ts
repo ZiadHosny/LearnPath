@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { CookieOptions, Response } from 'express';
 import { Errors } from '../../common/errors.js';
+import { AppLogger } from '../../common/logging/app-logger.service.js';
 import type { EnvironmentVariables } from '../../config/env.validation.js';
 import { DAY, now } from '../../lib/clock.js';
 import { randomToken, sha256Hex, signAccessToken } from '../../lib/tokens.js';
@@ -21,6 +22,7 @@ export class SessionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService<EnvironmentVariables, true>,
+    private readonly logger: AppLogger,
   ) {}
 
   private cookieOptions(): CookieOptions {
@@ -69,9 +71,16 @@ export class SessionService {
 
   async endSession(refreshToken: string | undefined): Promise<void> {
     if (!refreshToken) return;
-    await this.prisma.session.updateMany({
-      where: { refreshTokenHash: sha256Hex(refreshToken), endedAt: null },
-      data: { endedAt: now() },
+    const session = await this.prisma.session.findUnique({
+      where: { refreshTokenHash: sha256Hex(refreshToken) },
+      select: { id: true, userId: true, endedAt: true },
+    });
+    if (!session || session.endedAt) return;
+    await this.prisma.session.update({ where: { id: session.id }, data: { endedAt: now() } });
+    this.logger.success('User logged out', {
+      context: SessionService.name,
+      story: 'US-03',
+      userId: session.userId,
     });
   }
 

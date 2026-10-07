@@ -12,7 +12,7 @@ import { buildOpenApiDocument, configureApp } from './app.setup.js';
 async function main() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: false,
-    logger: ['error', 'warn'],
+    bufferLogs: true,
   });
   configureApp(app);
   const doc = buildOpenApiDocument(app);

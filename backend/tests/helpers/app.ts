@@ -18,7 +18,7 @@ export async function initApp(options: { controllers?: Type[] } = {}): Promise<N
   }).compile();
   app = moduleRef.createNestApplication<NestExpressApplication>({
     bodyParser: false,
-    logger: ['error', 'warn'],
+    bufferLogs: true,
   });
   configureApp(app);
   await app.init();
@@ -30,6 +30,12 @@ export async function closeApp(): Promise<void> {
     await app.close();
     app = undefined;
   }
+}
+
+// The running app, e.g. to reach a provider: currentApp().get(AppLogger).
+export function currentApp(): NestExpressApplication {
+  if (!app) throw new Error('initApp() has not run');
+  return app;
 }
 
 function agent() {

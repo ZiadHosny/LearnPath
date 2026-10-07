@@ -21,17 +21,17 @@ LearnPath is an online course school (tagline: "Your way to learn"). Phase 1 del
 
 ## Epics at a glance
 
-Phase 1 has 5 epics and 29 user stories (78 points), plus 2 technical stories (13 points); each epic below lists its stories in build order.
+Phase 1 has 5 epics and 29 user stories (78 points), plus 3 technical stories (16 points); each epic below lists its stories in build order.
 
 | Epic ID   | Epic                                  | Goal                                                         | Stories       | Count  | Points |
 | --------- | ------------------------------------- | ------------------------------------------------------------ | ------------- | ------ | ------ |
 | EP-01     | Authentication & accounts             | Users register, log in and reach only what their role allows | US-01 → US-07 | 7      | 19     |
-| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01 → TS-02 | 2      | 13     |
+| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01 → TS-03 | 3      | 16     |
 | EP-02     | Course catalog                        | Visitors find and evaluate published courses                 | US-08 → US-11 | 4      | 11     |
 | EP-03     | Instructor course & lesson management | Instructors build, structure and publish courses             | US-12 → US-18 | 7      | 19     |
 | EP-04     | Enrollment & learning                 | Students enroll, study lessons and track progress            | US-19 → US-24 | 6      | 16     |
 | EP-05     | Admin basics                          | Admin manages users, roles, categories and courses           | US-25 → US-29 | 5      | 13     |
-| **Total** |                                       |                                                              |               | **31** | **91** |
+| **Total** |                                       |                                                              |               | **32** | **94** |
 
 ## EP-01 · Epic: Authentication & accounts
 
@@ -119,6 +119,18 @@ As the **development team**, I want the API set up the way a new NestJS 12 proje
 - The standard NestJS 12 scripts exist (`start:dev`, `start:debug`, `start:prod`, `test:watch`, `test:cov`, `test:e2e`, `format`); the existing short names keep working.
 - `rxjs` is a direct dependency, and start-up logs go through Nest's `Logger`.
 - No behaviour change for clients: same endpoints, errors, cookies, docs; the web app is not modified.
+
+### TS-03 Colored, customizable logging — Should · 3 pts
+
+As the **development team**, I want one global, colored logger with clear levels and story tags, so that we can follow what the API is doing and spot errors and successes at a glance.
+
+- One logger is used by NestJS itself and by our code; every line shows time, level, source and message.
+- Levels each have their own color and label: error (red), warn (yellow), success (green, new), log (cyan), debug (magenta), verbose (gray).
+- A log can carry the user story it belongs to, shown as a tag such as `[US-02]`.
+- It is customizable: minimum level (`LOG_LEVEL`), colors on/off/auto (`LOG_COLORS`, also respects `NO_COLOR`) and format pretty or JSON (`LOG_FORMAT`); each level's color and label can be changed in one config file.
+- Every API request is logged with method, path, status and duration, colored by status; bodies, headers, passwords and tokens are never logged (tokens in paths are masked).
+- Account events are logged with their story tag: sign-up, login (success and failure), logout, password change, reset requested and done, using the user id only (no email, password or token).
+- No change to API behaviour or responses.
 
 ## EP-02 · Epic: Course catalog
 
@@ -307,7 +319,7 @@ As an **admin**, I want a simple dashboard, so that I can see how the school is 
 
 ## Build order & definition of done
 
-Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 and TS-02 (13 points).
+Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 → TS-03 (16 points).
 
 | Sprint | Goal                             | Stories                                                           | Points |
 | ------ | -------------------------------- | ----------------------------------------------------------------- | ------ |
@@ -315,6 +327,7 @@ Build in this order so each sprint ends with something you can demo; Phase 1 tot
 | 1      | People can sign in               | US-01, US-02, US-03, US-04                                        | 10     |
 | 1b     | Move the API to NestJS           | TS-01                                                             | 8      |
 | 1c     | Align the API with NestJS 12     | TS-02                                                             | 5      |
+| 1d     | Colored, customizable logging    | TS-03                                                             | 3      |
 | 2      | Instructors can start courses    | US-26, US-27, US-12, US-13, US-14                                 | 11     |
 | 3      | Courses have content and go live | US-15, US-16, US-17                                               | 10     |
 | 4      | Public catalog                   | US-08, US-09, US-11                                               | 8      |

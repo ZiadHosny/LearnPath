@@ -1,6 +1,5 @@
 import {
   Catch,
-  Logger,
   NotFoundException,
   PayloadTooLargeException,
   type ArgumentsHost,
@@ -8,12 +7,13 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AppError, Errors, TooManyAttemptsError } from '../errors.js';
+import { AppLogger } from '../logging/app-logger.service.js';
 
 // One owner for the error contract: every error leaves as { error: { code, message, details? } }.
 // Never logs request bodies (they can contain passwords).
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger('Exceptions');
+  constructor(private readonly logger: AppLogger) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const http = host.switchToHttp();
@@ -39,10 +39,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof NotFoundException) return Errors.notFound();
     if (exception instanceof PayloadTooLargeException) return Errors.fileTooLarge();
 
-    this.logger.error(
-      `Unhandled error on ${req.method} ${req.path}`,
-      exception instanceof Error ? exception.stack : String(exception),
-    );
+    // Method and path only: never the body, headers or query (they can hold secrets).
+    const message = `Unhandled error on ${req.method} ${req.path}`;
+    if (exception instanceof Error) this.logger.error(message, { context: 'Exceptions' }, exception);
+    else this.logger.error(message, { context: 'Exceptions', detail: String(exception) });
     return new AppError(500, 'INTERNAL', 'Something went wrong');
   }
 }
