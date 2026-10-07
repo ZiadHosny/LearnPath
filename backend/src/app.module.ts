@@ -29,4 +29,4 @@ import { PrismaModule } from './prisma/prisma.module.js';
     { provide: APP_PIPE, useFactory: createValidationPipe },
   ],
 })
-export class AppModule {}
+export class AppModule { }

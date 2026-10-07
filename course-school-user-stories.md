@@ -21,17 +21,17 @@ LearnPath is an online course school (tagline: "Your way to learn"). Phase 1 del
 
 ## Epics at a glance
 
-Phase 1 has 5 epics and 29 user stories (78 points), plus 1 technical story (8 points); each epic below lists its stories in build order.
+Phase 1 has 5 epics and 29 user stories (78 points), plus 2 technical stories (13 points); each epic below lists its stories in build order.
 
 | Epic ID   | Epic                                  | Goal                                                         | Stories       | Count  | Points |
 | --------- | ------------------------------------- | ------------------------------------------------------------ | ------------- | ------ | ------ |
 | EP-01     | Authentication & accounts             | Users register, log in and reach only what their role allows | US-01 → US-07 | 7      | 19     |
-| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01         | 1      | 8      |
+| TECH      | Platform                              | Keep the codebase ready for the next epics                   | TS-01 → TS-02 | 2      | 13     |
 | EP-02     | Course catalog                        | Visitors find and evaluate published courses                 | US-08 → US-11 | 4      | 11     |
 | EP-03     | Instructor course & lesson management | Instructors build, structure and publish courses             | US-12 → US-18 | 7      | 19     |
 | EP-04     | Enrollment & learning                 | Students enroll, study lessons and track progress            | US-19 → US-24 | 6      | 16     |
 | EP-05     | Admin basics                          | Admin manages users, roles, categories and courses           | US-25 → US-29 | 5      | 13     |
-| **Total** |                                       |                                                              |               | **30** | **86** |
+| **Total** |                                       |                                                              |               | **31** | **91** |
 
 ## EP-01 · Epic: Authentication & accounts
 
@@ -109,6 +109,16 @@ As the **development team**, I want the API built on NestJS with one module per 
 - Login is checked by a guard (missing, invalid or expired token → 401); roles are declared with `@Roles(...)` and checked by a roles guard (wrong role → 403).
 - API documentation is generated from the code (`@nestjs/swagger`): Swagger UI at `/api/docs` and `/api/openapi.json` in development only, listing every endpoint without a hand-written list; Apidog import still works.
 - No new features and no database changes: the Prisma schema and migrations stay as they are.
+
+### TS-02 Align the API with the NestJS 12 defaults — Must · 5 pts
+
+As the **development team**, I want the API set up the way a new NestJS 12 project is, so that the docs, examples and `nest g` generators fit our code and no experimental runtime flags are needed.
+
+- The API runs as an ES module project (`"type": "module"`), like `nest new` in NestJS 12; no `--experimental-vm-modules` flag anywhere.
+- Backend tests run on Vitest (the NestJS 12 default and the tool the web app already uses); every existing test passes without changing what it checks.
+- The standard NestJS 12 scripts exist (`start:dev`, `start:debug`, `start:prod`, `test:watch`, `test:cov`, `test:e2e`, `format`); the existing short names keep working.
+- `rxjs` is a direct dependency, and start-up logs go through Nest's `Logger`.
+- No behaviour change for clients: same endpoints, errors, cookies, docs; the web app is not modified.
 
 ## EP-02 · Epic: Course catalog
 
@@ -297,13 +307,14 @@ As an **admin**, I want a simple dashboard, so that I can see how the school is 
 
 ## Build order & definition of done
 
-Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 (8 points).
+Build in this order so each sprint ends with something you can demo; Phase 1 totals 29 user stories (78 points) plus TS-01 and TS-02 (13 points).
 
 | Sprint | Goal                             | Stories                                                           | Points |
 | ------ | -------------------------------- | ----------------------------------------------------------------- | ------ |
 | 0      | Project setup                    | Angular app, Node/Express API, database, seed admin user, CI/lint | —      |
 | 1      | People can sign in               | US-01, US-02, US-03, US-04                                        | 10     |
 | 1b     | Move the API to NestJS           | TS-01                                                             | 8      |
+| 1c     | Align the API with NestJS 12     | TS-02                                                             | 5      |
 | 2      | Instructors can start courses    | US-26, US-27, US-12, US-13, US-14                                 | 11     |
 | 3      | Courses have content and go live | US-15, US-16, US-17                                               | 10     |
 | 4      | Public catalog                   | US-08, US-09, US-11                                               | 8      |
