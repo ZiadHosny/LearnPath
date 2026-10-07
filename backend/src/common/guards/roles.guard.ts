@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
 import type { Role } from '../../generated/prisma/enums.js';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
-import { Errors } from '../errors.js';
+import { Errors } from '../http/app-error.js';
 
 // Global guard, runs after JwtAuthGuard: enforces @Roles(...) where it is declared.
 @Injectable()

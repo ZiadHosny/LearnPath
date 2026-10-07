@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { Injectable } from '@nestjs/common';
-import { Errors } from '../../common/errors.js';
+import { Errors } from '../../common/http/app-error.js';
 import { avatarsDir } from '../../config/paths.js';
 import { randomToken } from '../../lib/tokens.js';
 import { PrismaService } from '../../prisma/prisma.service.js';

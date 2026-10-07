@@ -6,11 +6,12 @@ import {
   type ExceptionFilter,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { AppError, Errors, TooManyAttemptsError } from '../errors.js';
 import { AppLogger } from '../logging/app-logger.service.js';
+import { AppError, Errors, TooManyAttemptsError } from './app-error.js';
+import { toErrorBody } from './response-format.js';
 
-// One owner for the error contract: every error leaves as { error: { code, message, details? } }.
-// Never logs request bodies (they can contain passwords).
+// Global: every error leaves through here, shaped by response-format.ts (toErrorBody).
+// Unexpected errors are logged once with the request id and stack, never with the request body.
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly logger: AppLogger) {}
@@ -24,13 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (error instanceof TooManyAttemptsError) {
       res.set('Retry-After', String(error.retryAfterSeconds));
     }
-    res.status(error.status).json({
-      error: {
-        code: error.code,
-        message: error.message,
-        ...(error.details ? { details: error.details } : {}),
-      },
-    });
+    res.status(error.status).json(toErrorBody(error));
   }
 
   private toAppError(exception: unknown, req: Request): AppError {
@@ -40,9 +35,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof PayloadTooLargeException) return Errors.fileTooLarge();
 
     // Method and path only: never the body, headers or query (they can hold secrets).
+    const meta = { context: 'Exceptions', requestId: req.requestId };
     const message = `Unhandled error on ${req.method} ${req.path}`;
-    if (exception instanceof Error) this.logger.error(message, { context: 'Exceptions' }, exception);
-    else this.logger.error(message, { context: 'Exceptions', detail: String(exception) });
-    return new AppError(500, 'INTERNAL', 'Something went wrong');
+    if (exception instanceof Error) this.logger.error(message, meta, exception);
+    else this.logger.error(message, { ...meta, detail: String(exception) });
+    return Errors.internal();
   }
 }

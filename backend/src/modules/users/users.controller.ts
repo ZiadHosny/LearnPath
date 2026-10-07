@@ -21,8 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { memoryStorage } from 'multer';
 import { CurrentUser, type AuthContext } from '../../common/decorators/current-user.decorator.js';
-import { ApiError } from '../../common/dto/error-response.dto.js';
-import { AppError } from '../../common/errors.js';
+import { ApiErrors } from '../../common/dto/error-response.dto.js';
+import { AppError } from '../../common/http/app-error.js';
 import { ChangePasswordDto } from './dto/change-password.dto.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
 import { UserResponseDto } from './dto/user-response.dto.js';
@@ -33,7 +33,7 @@ import { UsersService } from './users.service.js';
 // Every endpoint here needs a login (global JwtAuthGuard); any role may call them.
 @ApiTags('Profile')
 @ApiBearerAuth('bearerAuth')
-@ApiError(401, 'Missing, invalid or expired access token', 'UNAUTHENTICATED')
+@ApiErrors('UNAUTHENTICATED')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -51,7 +51,7 @@ export class UsersController {
   @Patch('me')
   @ApiOperation({ summary: 'Update my name and bio; email cannot be changed (US-05)' })
   @ApiOkResponse({ type: UserResponseDto })
-  @ApiError(400, 'Some fields are invalid (unknown fields such as email are refused)', 'VALIDATION_ERROR')
+  @ApiErrors('VALIDATION_ERROR')
   async updateProfile(@CurrentUser() auth: AuthContext, @Body() body: UpdateProfileDto) {
     return toUserDto(await this.users.updateProfile(auth.userId, body));
   }
@@ -67,9 +67,9 @@ export class UsersController {
     },
   })
   @ApiOkResponse({ type: UserResponseDto, description: 'Updated user with the new photoUrl' })
-  @ApiError(400, 'No photo sent', 'VALIDATION_ERROR')
-  @ApiError(413, 'Photo must be 2 MB or smaller', 'FILE_TOO_LARGE')
-  @ApiError(415, 'Photo must be a JPG or PNG image', 'UNSUPPORTED_FILE_TYPE')
+  @ApiErrors('VALIDATION_ERROR')
+  @ApiErrors('FILE_TOO_LARGE')
+  @ApiErrors('UNSUPPORTED_FILE_TYPE')
   @UseInterceptors(
     FileInterceptor('photo', {
       storage: memoryStorage(),
@@ -81,9 +81,10 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File | undefined,
   ) {
     if (!file) {
-      throw new AppError(400, 'VALIDATION_ERROR', 'Choose a photo to upload', [
-        { field: 'photo', message: 'Choose a photo to upload' },
-      ]);
+      throw new AppError('VALIDATION_ERROR', {
+        message: 'Choose a photo to upload',
+        details: [{ field: 'photo', message: 'Choose a photo to upload' }],
+      });
     }
     return toUserDto(await this.photos.savePhoto(auth.userId, file.buffer));
   }
@@ -92,7 +93,7 @@ export class UsersController {
   @HttpCode(204)
   @ApiOperation({ summary: 'Change my password; other devices are signed out (US-06)' })
   @ApiNoContentResponse({ description: 'Password changed' })
-  @ApiError(400, 'Current password is incorrect, or the new password is invalid', 'INVALID_CURRENT_PASSWORD', 'VALIDATION_ERROR')
+  @ApiErrors('INVALID_CURRENT_PASSWORD', 'VALIDATION_ERROR')
   async changePassword(
     @CurrentUser() auth: AuthContext,
     @Body() body: ChangePasswordDto,

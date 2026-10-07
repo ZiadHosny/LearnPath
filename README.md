@@ -69,6 +69,19 @@ Seed accounts, password `Passw0rd!`: `admin@learnpath.local`, `instructor@learnp
 
 PostgreSQL is published on port **5433** so it does not clash with a local PostgreSQL on 5432.
 
+## HTTP responses and errors
+
+Everything that shapes a response lives in `backend/src/common/http/`:
+
+| To change… | Edit |
+|---|---|
+| An error's status or default message, or add an error code | `error-catalog.ts` (one entry per code; the docs follow it) |
+| The error body or success body shape | `response-format.ts` (`toErrorBody`, `toSuccessBody`) |
+| Wrap successes in `{ "data": … }` | `RESPONSE_FORMAT.envelope = true` in `response-format.ts` — breaking for the web app |
+
+In code, throw by code: `throw new AppError('EMAIL_TAKEN')` or a shortcut such as `Errors.emailTaken()`.
+Every response has an `X-Request-Id` header; the same id is on that request's log lines.
+
 ## Logging
 
 One colored logger for the whole API (`backend/src/common/logging/`). Each line shows time, level,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Errors } from '../../common/errors.js';
+import { Errors } from '../../common/http/app-error.js';
 import { AppLogger } from '../../common/logging/app-logger.service.js';
 import { now } from '../../lib/clock.js';
 import { hashPassword, verifyPassword } from '../../lib/password.js';
