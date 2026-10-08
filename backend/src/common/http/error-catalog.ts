@@ -8,6 +8,7 @@ import { en } from '../../i18n/locales/en.js';
 export const ERROR_CATALOG = {
   VALIDATION_ERROR: { status: 400 },
   INVALID_CURRENT_PASSWORD: { status: 400 },
+  CANNOT_CHANGE_OWN_ROLE: { status: 400 },
   UNAUTHENTICATED: { status: 401 },
   INVALID_CREDENTIALS: { status: 401 },
   SESSION_EXPIRED: { status: 401 },
@@ -15,6 +16,8 @@ export const ERROR_CATALOG = {
   ACCOUNT_BLOCKED: { status: 403 },
   NOT_FOUND: { status: 404 },
   EMAIL_TAKEN: { status: 409 },
+  CATEGORY_EXISTS: { status: 409 },
+  CATEGORY_IN_USE: { status: 409 },
   LINK_EXPIRED: { status: 410 },
   FILE_TOO_LARGE: { status: 413 },
   UNSUPPORTED_FILE_TYPE: { status: 415 },

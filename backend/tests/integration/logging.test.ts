@@ -1,13 +1,15 @@
 import { AppLogger } from '../../src/common/logging/app-logger.service.js';
 import type { LogLevel } from '../../src/common/logging/logger.config.js';
 import { api, currentApp, refreshCookieFrom } from '../helpers/app.js';
-import { latestMailTo } from '../helpers/mailpit.js';
+import { clearMail, latestMailTo } from '../helpers/mailpit.js';
 
 // TS-03 US3: account events are logged with their story, and nothing secret reaches the logs.
 describe('TS-03 US3 account event logs', () => {
   let lines: Array<{ line: string; level: LogLevel }>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // The email address is fixed, so an older reset email from a previous run must not be read.
+    await clearMail();
     lines = [];
     currentApp()
       .get(AppLogger)

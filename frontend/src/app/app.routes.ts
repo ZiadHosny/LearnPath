@@ -68,9 +68,23 @@ export const routes: Routes = [
   {
     path: 'my-courses',
     canActivate: [roleGuard('INSTRUCTOR')],
-    component: PlaceholderComponent,
-    data: { title: 'titles.myCourses', epic: 'placeholder.ep03' },
+    loadComponent: () =>
+      import('./features/courses/my-courses/my-courses.component').then((m) => m.MyCoursesComponent),
     title: 'titles.myCourses',
+  },
+  {
+    path: 'my-courses/new',
+    canActivate: [roleGuard('INSTRUCTOR')],
+    loadComponent: () =>
+      import('./features/courses/course-form/course-form.component').then((m) => m.CourseFormComponent),
+    title: 'titles.newCourse',
+  },
+  {
+    path: 'my-courses/:id/edit',
+    canActivate: [roleGuard('INSTRUCTOR', 'ADMIN')],
+    loadComponent: () =>
+      import('./features/courses/course-form/course-form.component').then((m) => m.CourseFormComponent),
+    title: 'titles.editCourse',
   },
   {
     path: 'admin/dashboard',
@@ -78,6 +92,22 @@ export const routes: Routes = [
     component: PlaceholderComponent,
     data: { title: 'titles.dashboard', epic: 'placeholder.ep05' },
     title: 'titles.dashboard',
+  },
+  {
+    path: 'admin/users',
+    canActivate: [roleGuard('ADMIN')],
+    loadComponent: () =>
+      import('./features/admin/users/admin-users.component').then((m) => m.AdminUsersComponent),
+    title: 'titles.adminUsers',
+  },
+  {
+    path: 'admin/categories',
+    canActivate: [roleGuard('ADMIN')],
+    loadComponent: () =>
+      import('./features/admin/categories/admin-categories.component').then(
+        (m) => m.AdminCategoriesComponent,
+      ),
+    title: 'titles.adminCategories',
   },
   { path: '**', redirectTo: '' },
 ];

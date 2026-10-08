@@ -15,8 +15,11 @@
 | `/profile` | My profile | `authGuard` | US-05 |
 | `/profile/password` | Change password | `authGuard` | US-06 |
 | `/my-learning` | My Learning *(placeholder, EP-04)* | `roleGuard(STUDENT)` | US-02 |
-| `/my-courses` | My Courses *(placeholder, EP-03)* | `roleGuard(INSTRUCTOR)` | US-02 |
+| `/my-courses` | My Courses *(built in 007: US-13)* | `roleGuard(INSTRUCTOR)` | US-02 |
+| `/my-courses/new`, `/my-courses/:id/edit` | Course form *(007: US-12, US-14; edit also ADMIN)* | `roleGuard(INSTRUCTOR[, ADMIN])` | US-12 |
 | `/admin/dashboard` | Dashboard *(placeholder, EP-05)* | `roleGuard(ADMIN)` | US-02 |
+| `/admin/users` | Users *(007: US-26)* | `roleGuard(ADMIN)` | US-26 |
+| `/admin/categories` | Categories *(007: US-27)* | `roleGuard(ADMIN)` | US-27 |
 
 ## Guards
 
@@ -36,6 +39,7 @@
 | My Learning | | ✓ | | |
 | My Courses | | | ✓ | |
 | Dashboard | | | | ✓ |
+| Users / Categories *(added in 007)* | | | | ✓ |
 | Profile / Change password / Log out | | ✓ | ✓ | ✓ |
 
 ## Interceptor behaviour

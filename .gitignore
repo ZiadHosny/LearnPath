@@ -18,6 +18,8 @@ coverage/
 # User uploads (keep the empty folder)
 backend/uploads/avatars/*
 !backend/uploads/avatars/.gitkeep
+backend/uploads/thumbnails/*
+!backend/uploads/thumbnails/.gitkeep
 
 # Prisma client, regenerated from prisma/schema.prisma by `npm install` / `prisma generate`
 backend/src/generated/

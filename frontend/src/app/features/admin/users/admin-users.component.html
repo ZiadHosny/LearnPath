@@ -1,0 +1,70 @@
+<section class="page">
+  <h1>{{ 'admin.users.title' | t }}</h1>
+
+  <form class="search" (ngSubmit)="find()">
+    <mat-form-field class="grow">
+      <mat-label>{{ 'admin.users.search' | t }}</mat-label>
+      <input matInput name="search" [(ngModel)]="search" maxlength="100" />
+    </mat-form-field>
+    <button mat-flat-button type="submit">{{ 'admin.users.searchButton' | t }}</button>
+  </form>
+
+  @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (data(); as page) {
+    @if (page.items.length === 0) {
+      <p class="empty">{{ 'admin.users.empty' | t }}</p>
+    } @else {
+      <table class="users">
+        <thead>
+          <tr>
+            <th>{{ 'admin.users.name' | t }}</th>
+            <th>{{ 'admin.users.email' | t }}</th>
+            <th>{{ 'admin.users.role' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of page.items; track user.id) {
+            <tr [attr.data-test]="'user-' + user.id">
+              <td>
+                {{ user.fullName }}
+                @if (user.id === myId()) {
+                  <span class="you">{{ 'admin.users.you' | t }}</span>
+                }
+              </td>
+              <td class="email"><bdi>{{ user.email }}</bdi></td>
+              <td>
+                <mat-form-field class="role" subscriptSizing="dynamic">
+                  <mat-select
+                    [value]="user.role"
+                    [disabled]="user.id === myId() || savingId() === user.id"
+                    [aria-label]="'admin.users.role' | t"
+                    (selectionChange)="changeRole(user, $event.value)"
+                  >
+                    @for (role of roles; track role) {
+                      <mat-option [value]="role">{{ 'roles.' + role | t }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <nav class="pager">
+        <button mat-stroked-button type="button" [disabled]="page.page <= 1" (click)="load(page.page - 1)">
+          {{ 'admin.users.previous' | t }}
+        </button>
+        <span data-test="page">{{ 'admin.users.page' | t: { page: i18n.number(page.page), pages: i18n.number(pages()) } }}</span>
+        <button mat-stroked-button type="button" [disabled]="page.page >= pages()" (click)="load(page.page + 1)">
+          {{ 'admin.users.next' | t }}
+        </button>
+      </nav>
+    }
+  }
+</section>

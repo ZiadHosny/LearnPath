@@ -187,6 +187,8 @@ Instructors build courses as **Course → Sections → Lessons**; a course stays
 
 ### US-12 Create a course (draft) — Must · 3 pts
 
+*Done 2026-10-08, Sprint 2 (`specs/007-instructor-courses`).*
+
 As an **instructor**, I want to create a new course with its basic info, so that I can start building it.
 
 - Required: title (max 120 chars), short description (max 250), category, level.
@@ -196,12 +198,16 @@ As an **instructor**, I want to create a new course with its basic info, so that
 
 ### US-13 List my courses — Must · 2 pts
 
+*Done 2026-10-08, Sprint 2 (`specs/007-instructor-courses`). Lesson and student counts show 0 until Sprint 3 / Sprint 5.*
+
 As an **instructor**, I want to see all courses I own, so that I can manage them in one place.
 
 - Shows title, status (Draft / Published / Archived), number of lessons, number of enrolled students, last updated.
 - An instructor sees only their own courses.
 
 ### US-14 Edit course details — Must · 2 pts
+
+*Done 2026-10-08, Sprint 2 (`specs/007-instructor-courses`).*
 
 As an **instructor**, I want to edit my course info, so that I can fix and improve it.
 
@@ -295,12 +301,16 @@ The admin keeps the platform in order; the first admin account is created with a
 
 ### US-25 Manage users — Must · 3 pts
 
+*Partly built in Sprint 2 for US-26: the user list (name, email, role, search, 20 per page). Blocking, details and the other columns remain for Sprint 6.*
+
 As an **admin**, I want to see and search all users, so that I can support and control accounts.
 
 - Table with name, email, role, status (Active / Blocked), registered date; search by name or email; pagination.
 - Admin can block and unblock a user; blocked users cannot log in and see "Account blocked".
 
 ### US-26 Assign roles — Must · 2 pts
+
+*Done 2026-10-08, Sprint 2 (`specs/007-instructor-courses`).*
 
 As an **admin**, I want to change a user's role, so that I can approve instructors.
 
@@ -309,6 +319,8 @@ As an **admin**, I want to change a user's role, so that I can approve instructo
 - The new role applies at the user's next login or token refresh.
 
 ### US-27 Manage categories — Must · 2 pts
+
+*Done 2026-10-08, Sprint 2 (`specs/007-instructor-courses`).*
 
 As an **admin**, I want to add, rename and delete course categories, so that the catalog stays organized.
 

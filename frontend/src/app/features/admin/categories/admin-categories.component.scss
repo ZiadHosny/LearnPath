@@ -1,0 +1,53 @@
+.narrow {
+  max-width: 720px;
+}
+
+.add,
+.rename {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.grow {
+  flex: 1;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.categories {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 8px;
+    text-align: start;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  th {
+    font: var(--mat-sys-title-small);
+  }
+}
+
+.count {
+  width: 80px;
+}
+
+.actions {
+  text-align: end;
+  white-space: nowrap;
+}
+
+.danger {
+  color: var(--mat-sys-error);
+}

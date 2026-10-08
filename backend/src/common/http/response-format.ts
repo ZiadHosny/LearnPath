@@ -24,7 +24,7 @@ export interface ErrorBody {
 
 // Texts are translated into the request's language (EP-06); codes never change.
 export function toErrorBody(error: AppError, lang: LanguageCode = DEFAULT_LANGUAGE): ErrorBody {
-  const message = error.fixedMessage ?? t(lang, error.messageKey ?? `errors.${error.code}`);
+  const message = error.fixedMessage ?? t(lang, error.messageKey ?? `errors.${error.code}`, error.params);
   const details = error.details?.map((detail) => ({
     field: detail.field,
     message: t(lang, detail.message, { field: detail.field }),

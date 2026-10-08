@@ -1,0 +1,56 @@
+.search {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.grow {
+  flex: 1;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.users {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 8px;
+    text-align: start;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  th {
+    font: var(--mat-sys-title-small);
+  }
+}
+
+.email {
+  word-break: break-all;
+}
+
+.you {
+  margin-inline-start: 4px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.role {
+  width: 160px;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}

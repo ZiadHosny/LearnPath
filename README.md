@@ -127,3 +127,15 @@ cd frontend && npm test              # component, guard and service tests
 ```
 
 Full walkthrough per story: [specs/001-auth-accounts/quickstart.md](specs/001-auth-accounts/quickstart.md).
+
+## What works so far
+
+| Area | Screens | Who |
+|---|---|---|
+| Accounts (EP-01) | Sign up, log in, profile, change / reset password | everyone |
+| Languages (EP-06) | English / Arabic switch in the header | everyone |
+| Courses (Sprint 2) | My Courses, New course, Edit course (details, "what you will learn", thumbnail) | instructors (admins can edit any course) |
+| Admin (Sprint 2) | Users (search, change role), Categories (add, rename, delete) | admins |
+
+New courses are private Drafts; publishing comes in Sprint 3. Try it with the seed accounts:
+`instructor@learnpath.local` for courses, `admin@learnpath.local` for Users and Categories.

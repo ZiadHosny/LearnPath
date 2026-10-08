@@ -9,6 +9,9 @@ import { LoggingModule } from './common/logging/logging.module.js';
 import { createValidationPipe } from './common/pipes/validation.pipe.js';
 import { validateEnv } from './config/env.validation.js';
 import { MailModule } from './mail/mail.module.js';
+import { AdminUsersModule } from './modules/admin-users/admin-users.module.js';
+import { CategoriesModule } from './modules/categories/categories.module.js';
+import { CoursesModule } from './modules/courses/courses.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { PasswordResetModule } from './modules/password-reset/password-reset.module.js';
 import { UsersModule } from './modules/users/users.module.js';
@@ -23,6 +26,9 @@ import { PrismaModule } from './prisma/prisma.module.js';
     AuthModule,
     UsersModule,
     PasswordResetModule,
+    AdminUsersModule,
+    CategoriesModule,
+    CoursesModule,
   ],
   providers: [
     // Guards run in this order: login first, then roles.

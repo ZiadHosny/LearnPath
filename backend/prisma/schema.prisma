@@ -38,6 +38,7 @@ model User {
 
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
+  courses             Course[]
 
   @@map("users")
 }
@@ -83,4 +84,52 @@ model PasswordResetToken {
 
   @@index([userId])
   @@map("password_reset_tokens")
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+/// Course categories (US-27). Names are unique ignoring case and surrounding spaces (nameKey).
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(60)
+  /// Trimmed lower-case name, for case-insensitive uniqueness
+  nameKey   String   @unique @map("name_key") @db.VarChar(60)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  courses Course[]
+
+  @@map("categories")
+}
+
+/// A course (US-12). New courses are Draft; only Published courses are ever public.
+model Course {
+  id               String       @id @default(uuid()) @db.Uuid
+  title            String       @db.VarChar(120)
+  shortDescription String       @map("short_description") @db.VarChar(250)
+  description      String?      @db.VarChar(5000)
+  /// "What you will learn": up to 10 items of up to 120 characters
+  learningOutcomes String[]     @default([]) @map("learning_outcomes")
+  level            CourseLevel
+  categoryId       String       @map("category_id") @db.Uuid
+  category         Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  thumbnailPath    String?      @map("thumbnail_path") @db.VarChar(255)
+  status           CourseStatus @default(DRAFT)
+  ownerId          String       @map("owner_id") @db.Uuid
+  owner            User         @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([ownerId, updatedAt])
+  @@index([categoryId])
+  @@map("courses")
 }

@@ -1,5 +1,5 @@
 import { t } from '../../i18n/translate.js';
-import { ERROR_CATALOG, errorMessage, type ErrorCode } from './error-catalog.js';
+import { ERROR_CATALOG, type ErrorCode } from './error-catalog.js';
 
 export type { ErrorCode } from './error-catalog.js';
 
@@ -15,6 +15,7 @@ export interface AppErrorOptions {
   message?: string; // a fixed text (not translated); prefer messageKey
   details?: ErrorDetail[];
   status?: number; // only for errors whose status depends on the cause (e.g. body parser 413)
+  params?: Record<string, string>; // fills {{name}} in the text, e.g. { count: '3' }
 }
 
 // An API error. Status from ERROR_CATALOG; text from the translation files.
@@ -24,17 +25,19 @@ export class AppError extends Error {
   readonly details?: ErrorDetail[];
   readonly messageKey?: string;
   readonly fixedMessage?: string;
+  readonly params?: Record<string, string>;
 
   constructor(
     public readonly code: ErrorCode,
     options: AppErrorOptions = {},
   ) {
-    super(options.message ?? (options.messageKey ? t('en', options.messageKey) : errorMessage(code)));
+    super(options.message ?? t('en', options.messageKey ?? `errors.${code}`, options.params));
     this.name = 'AppError';
     this.status = options.status ?? ERROR_CATALOG[code].status;
     this.details = options.details;
     this.messageKey = options.messageKey;
     this.fixedMessage = options.message;
+    this.params = options.params;
   }
 }
 
@@ -58,5 +61,12 @@ export const Errors = {
   fileTooLarge: () => new AppError('FILE_TOO_LARGE'),
   unsupportedFileType: () => new AppError('UNSUPPORTED_FILE_TYPE'),
   notFound: () => new AppError('NOT_FOUND'),
+  cannotChangeOwnRole: () => new AppError('CANNOT_CHANGE_OWN_ROLE'),
+  categoryExists: () => new AppError('CATEGORY_EXISTS'),
+  categoryInUse: (count: number) =>
+    new AppError('CATEGORY_IN_USE', {
+      messageKey: count === 1 ? 'messages.categoryInUseOne' : undefined,
+      params: { count: String(count) },
+    }),
   internal: () => new AppError('INTERNAL'),
 };
