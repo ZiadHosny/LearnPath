@@ -1,0 +1,64 @@
+<section class="page narrow">
+  <h1>{{ 'admin.categories.title' | t }}</h1>
+
+  <form class="add" [formGroup]="addForm" (ngSubmit)="add()" novalidate>
+    <mat-form-field class="grow">
+      <mat-label>{{ 'admin.categories.newName' | t }}</mat-label>
+      <input matInput formControlName="name" maxlength="60" />
+      @if (addForm.controls.name.invalid && addForm.controls.name.touched) {
+        <mat-error>{{ 'courses.validation.categoryNameLength' | t }}</mat-error>
+      }
+    </mat-form-field>
+    <button mat-flat-button type="submit" [disabled]="busy()">{{ 'admin.categories.add' | t }}</button>
+  </form>
+
+  @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (loading() && items().length === 0) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (items().length === 0) {
+    <p class="empty">{{ 'admin.categories.empty' | t }}</p>
+  } @else {
+    <table class="categories">
+      <thead>
+        <tr>
+          <th>{{ 'admin.categories.name' | t }}</th>
+          <th class="count">{{ 'admin.categories.courses' | t }}</th>
+          <th><span class="visually-hidden">{{ 'admin.categories.rename' | t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of items(); track category.id) {
+          <tr [attr.data-test]="'category-' + category.id">
+            @if (editingId() === category.id) {
+              <td colspan="3">
+                <form class="rename" [formGroup]="renameForm" (ngSubmit)="saveRename(category)" novalidate>
+                  <mat-form-field class="grow" subscriptSizing="dynamic">
+                    <mat-label>{{ 'admin.categories.name' | t }}</mat-label>
+                    <input matInput formControlName="name" maxlength="60" />
+                    @if (renameForm.controls.name.invalid && renameForm.controls.name.touched) {
+                      <mat-error>{{ 'courses.validation.categoryNameLength' | t }}</mat-error>
+                    }
+                  </mat-form-field>
+                  <button mat-flat-button type="submit" [disabled]="busy()">{{ 'admin.categories.save' | t }}</button>
+                  <button mat-button type="button" (click)="cancelRename()">{{ 'admin.categories.cancel' | t }}</button>
+                </form>
+              </td>
+            } @else {
+              <td>{{ category.name }}</td>
+              <td class="count">{{ i18n.number(category.courseCount) }}</td>
+              <td class="actions">
+                <button mat-button type="button" (click)="startRename(category)">{{ 'admin.categories.rename' | t }}</button>
+                <button mat-button type="button" class="danger" [disabled]="busy()" (click)="remove(category)">
+                  {{ 'admin.categories.delete' | t }}
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

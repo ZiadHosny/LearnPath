@@ -2,7 +2,8 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import { Controller, Get } from '@nestjs/common';
 import { api, initApp } from '../helpers/app.js';
 
-// The 11 EP-01 operations (001 contract), as they must appear in the generated document.
+// Every operation, as it must appear in the generated document: the 11 EP-01 operations
+// (001 contract) plus the 11 from Sprint 2 (007: users, categories, courses).
 const EXPECTED = [
   'post /api/auth/register',
   'post /api/auth/login',
@@ -15,6 +16,17 @@ const EXPECTED = [
   'post /api/auth/password-reset/request',
   'get /api/auth/password-reset/{token}',
   'post /api/auth/password-reset/confirm',
+  'get /api/admin/users',
+  'patch /api/admin/users/{id}/role',
+  'get /api/categories',
+  'post /api/categories',
+  'patch /api/categories/{id}',
+  'delete /api/categories/{id}',
+  'post /api/courses',
+  'get /api/courses/mine',
+  'get /api/courses/{id}',
+  'patch /api/courses/{id}',
+  'put /api/courses/{id}/thumbnail',
 ].sort();
 
 type Doc = {
@@ -44,7 +56,7 @@ class ThrowAwayController {
 }
 
 describe('US2 API documentation generated from the code', () => {
-  it('serves an OpenAPI 3 document with exactly the 11 EP-01 operations (SC-004)', async () => {
+  it('serves an OpenAPI 3 document with exactly the expected operations (SC-004)', async () => {
     const doc = await getDoc();
     expect(doc.openapi.startsWith('3.')).toBe(true);
     expect(operations(doc)).toEqual(EXPECTED);
@@ -55,10 +67,10 @@ describe('US2 API documentation generated from the code', () => {
     await expect(SwaggerParser.validate(structuredClone(doc) as never)).resolves.toBeDefined();
   });
 
-  it('groups endpoints as Auth, Profile and Password reset', async () => {
+  it('groups endpoints by area', async () => {
     const doc = await getDoc();
     const tags = new Set(Object.values(doc.paths).flatMap((item) => Object.values(item).flatMap((op) => op.tags ?? [])));
-    expect([...tags].sort()).toEqual(['Auth', 'Password reset', 'Profile']);
+    expect([...tags].sort()).toEqual(['Admin', 'Auth', 'Categories', 'Courses', 'Password reset', 'Profile']);
   });
 
   it('shows request rules and examples from the DTOs (FR-013)', async () => {

@@ -1,0 +1,58 @@
+<section class="page">
+  <div class="heading">
+    <h1>{{ 'courses.myTitle' | t }}</h1>
+    @if (items().length > 0) {
+      <a mat-flat-button routerLink="/my-courses/new">{{ 'courses.newCourse' | t }}</a>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+    <button mat-stroked-button type="button" (click)="load()">{{ 'profile.tryAgain' | t }}</button>
+  } @else if (items().length === 0) {
+    <div class="empty" data-test="empty">
+      <p>{{ 'courses.empty' | t }}</p>
+      <a mat-flat-button routerLink="/my-courses/new">{{ 'courses.emptyAction' | t }}</a>
+    </div>
+  } @else {
+    <table class="courses">
+      <thead>
+        <tr>
+          <th>{{ 'courses.columns.title' | t }}</th>
+          <th>{{ 'courses.columns.status' | t }}</th>
+          <th class="number">{{ 'courses.columns.lessons' | t }}</th>
+          <th class="number">{{ 'courses.columns.students' | t }}</th>
+          <th>{{ 'courses.columns.updated' | t }}</th>
+          <th><span class="visually-hidden">{{ 'courses.edit' | t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (course of items(); track course.id) {
+          <tr [attr.data-test]="'course-' + course.id">
+            <td class="title">
+              @if (course.thumbnailUrl) {
+                <img class="thumb" [src]="course.thumbnailUrl" alt="" />
+              } @else {
+                <span class="thumb placeholder" aria-hidden="true"></span>
+              }
+              {{ course.title }}
+            </td>
+            <td>
+              <span class="status" [attr.data-status]="course.status">
+                {{ 'courses.status.' + course.status | t }}
+              </span>
+            </td>
+            <td class="number">{{ i18n.number(course.lessonCount) }}</td>
+            <td class="number">{{ i18n.number(course.studentCount) }}</td>
+            <td>{{ i18n.date(course.updatedAt) }}</td>
+            <td class="actions">
+              <a mat-button [routerLink]="['/my-courses', course.id, 'edit']">{{ 'courses.edit' | t }}</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

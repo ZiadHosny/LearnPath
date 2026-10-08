@@ -1,0 +1,153 @@
+<section class="page narrow">
+  @if (isInstructor()) {
+    <a mat-button routerLink="/my-courses" class="back">{{ 'courses.form.back' | t }}</a>
+  }
+  <h1>{{ (isEdit() ? 'courses.form.editTitle' : 'courses.form.createTitle') | t }}</h1>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (loadError()) {
+    <p class="form-error" role="alert">{{ loadError() }}</p>
+  } @else {
+    @if (isEdit()) {
+      <div class="thumbnail-row">
+        @if (course()?.thumbnailUrl) {
+          <img class="thumbnail" [src]="course()!.thumbnailUrl" [alt]="'courses.form.thumbnailAlt' | t" />
+        } @else {
+          <div class="thumbnail placeholder" aria-hidden="true"></div>
+        }
+        <div>
+          <button mat-stroked-button type="button" [disabled]="uploading()" (click)="thumbnailInput.click()">
+            {{ (uploading() ? 'courses.form.uploading' : 'courses.form.changeThumbnail') | t }}
+          </button>
+          <input
+            #thumbnailInput
+            type="file"
+            accept="image/jpeg,image/png"
+            hidden
+            (change)="onThumbnailSelected($event)"
+          />
+          <p class="hint">{{ 'courses.form.thumbnailHint' | t }}</p>
+        </div>
+      </div>
+      @if (thumbnailError()) {
+        <p class="form-error" role="alert" data-test="thumbnail-error">{{ thumbnailError() }}</p>
+      }
+    }
+
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      @if (formError()) {
+        <div class="form-error" role="alert">
+          <p>{{ formError() }}</p>
+          @if (fieldErrors().length) {
+            <ul>
+              @for (message of fieldErrors(); track $index) {
+                <li>{{ message }}</li>
+              }
+            </ul>
+          }
+        </div>
+      }
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'courses.form.title' | t }}</mat-label>
+        <input matInput formControlName="title" [maxlength]="limits.title" />
+        <mat-hint align="end">{{ i18n.number(form.controls.title.value.length) }} / {{ i18n.number(limits.title) }}</mat-hint>
+        @if (form.controls.title.invalid) {
+          <mat-error>{{ 'courses.validation.titleLength' | t }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'courses.form.shortDescription' | t }}</mat-label>
+        <textarea matInput formControlName="shortDescription" rows="2" [maxlength]="limits.shortDescription"></textarea>
+        <mat-hint align="end">
+          {{ i18n.number(form.controls.shortDescription.value.length) }} / {{ i18n.number(limits.shortDescription) }}
+        </mat-hint>
+        @if (form.controls.shortDescription.invalid) {
+          <mat-error>{{ 'courses.validation.shortDescriptionLength' | t }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="row">
+        <mat-form-field class="grow">
+          <mat-label>{{ 'courses.form.category' | t }}</mat-label>
+          <mat-select formControlName="categoryId" data-test="category">
+            @for (category of categories(); track category.id) {
+              <mat-option [value]="category.id">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+          @if (categories().length === 0) {
+            <mat-hint>{{ 'courses.form.noCategories' | t }}</mat-hint>
+          }
+          @if (form.controls.categoryId.invalid) {
+            <mat-error>{{ 'courses.validation.categoryRequired' | t }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="grow">
+          <mat-label>{{ 'courses.form.level' | t }}</mat-label>
+          <mat-select formControlName="level" data-test="level">
+            @for (level of levels; track level) {
+              <mat-option [value]="level">{{ 'courses.levels.' + level | t }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.level.invalid) {
+            <mat-error>{{ 'courses.validation.levelRequired' | t }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'courses.form.description' | t }}</mat-label>
+        <textarea matInput formControlName="description" rows="6" [maxlength]="limits.description"></textarea>
+        <mat-hint align="end">
+          {{ i18n.number(form.controls.description.value.length) }} / {{ i18n.number(limits.description) }}
+        </mat-hint>
+        @if (form.controls.description.invalid) {
+          <mat-error>{{ 'courses.validation.descriptionTooLong' | t }}</mat-error>
+        }
+      </mat-form-field>
+
+      <fieldset class="outcomes" formArrayName="learningOutcomes">
+        <legend>{{ 'courses.form.outcomes' | t }}</legend>
+        @for (control of outcomes.controls; track control; let i = $index) {
+          <div class="outcome">
+            <mat-form-field class="grow" subscriptSizing="dynamic">
+              <mat-label>{{ 'courses.form.outcome' | t: { number: i18n.number(i + 1) } }}</mat-label>
+              <input matInput [formControlName]="i" [maxlength]="limits.outcome" />
+              @if (control.invalid) {
+                <mat-error>{{ 'courses.validation.outcomeTooLong' | t }}</mat-error>
+              }
+            </mat-form-field>
+            <button
+              mat-icon-button
+              type="button"
+              [attr.aria-label]="'courses.form.removeOutcome' | t"
+              (click)="removeOutcome(i)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+        @if (outcomes.length < limits.outcomes) {
+          <button mat-button type="button" data-test="add-outcome" (click)="addOutcome()">
+            <mat-icon>add</mat-icon> {{ 'courses.form.addOutcome' | t }}
+          </button>
+        }
+      </fieldset>
+
+      @if (!isEdit()) {
+        <p class="hint">{{ 'courses.form.thumbnailAfterCreate' | t }}</p>
+      }
+
+      <button mat-flat-button class="full-width" type="submit" [disabled]="saving()">
+        @if (saving()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ (isEdit() ? 'courses.form.save' : 'courses.form.create') | t }}
+        }
+      </button>
+    </form>
+  }
+</section>

@@ -1,0 +1,77 @@
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.courses {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 8px;
+    text-align: start;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  th {
+    font: var(--mat-sys-title-small);
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thumb {
+  width: 64px;
+  height: 36px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.thumb.placeholder {
+  background: var(--mat-sys-surface-container-high);
+}
+
+.number {
+  text-align: end;
+}
+
+.actions {
+  text-align: end;
+}
+
+.status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font: var(--mat-sys-label-medium);
+  background: var(--mat-sys-surface-container-high);
+}
+
+.status[data-status="PUBLISHED"] {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.status[data-status="ARCHIVED"] {
+  color: var(--mat-sys-on-surface-variant);
+}

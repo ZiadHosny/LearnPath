@@ -60,3 +60,13 @@ body {
   color: var(--mat-sys-error);
   margin: 0 0 16px;
 }
+
+// Text for screen readers only (e.g. headers of action columns).
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -45,9 +45,17 @@ export class HeaderComponent {
   protected readonly links = computed<MenuLink[]>(() => {
     const role = this.auth.role();
     if (!role) return [{ label: 'nav.catalog', path: '/catalog' }];
+    const adminLinks: MenuLink[] =
+      role === 'ADMIN'
+        ? [
+            { label: 'nav.users', path: '/admin/users' },
+            { label: 'nav.categories', path: '/admin/categories' },
+          ]
+        : [];
     return [
       { label: 'nav.catalog', path: '/catalog' },
       { label: HOME_LABEL[role], path: roleHome(role) },
+      ...adminLinks,
       { label: 'nav.profile', path: '/profile' },
       { label: 'nav.changePassword', path: '/profile/password' },
     ];

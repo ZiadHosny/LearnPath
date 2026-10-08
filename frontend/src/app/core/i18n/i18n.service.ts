@@ -67,6 +67,11 @@ export class I18nService {
     return new Intl.NumberFormat(this.current().locale).format(value);
   }
 
+  // A date (ISO string or Date) in the language's own format, e.g. "Oct 8, 2026".
+  date(value: string | Date): string {
+    return new Intl.DateTimeFormat(this.current().locale, { dateStyle: 'medium' }).format(new Date(value));
+  }
+
   private applyToDocument(): void {
     const root = this.document.documentElement;
     root.lang = this.current().code;

@@ -23,3 +23,7 @@ export function matchFields(field: string, confirmField: string): ValidatorFn {
     return null;
   };
 }
+
+// Like Validators.required, but text made only of spaces also counts as empty (the server trims).
+export const notBlank: ValidatorFn = (control: AbstractControl): ValidationErrors | null =>
+  String(control.value ?? '').trim() ? null : { required: true };

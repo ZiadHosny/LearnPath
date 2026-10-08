@@ -75,6 +75,15 @@ describe('I18nService', () => {
     expect(i18n.number(1234)).toBe(new Intl.NumberFormat('ar-EG-u-nu-latn').format(1234));
   });
 
+  it('US-30 S7: formats dates with the language locale', async () => {
+    const day = '2026-10-08T12:00:00.000Z';
+    expect(i18n.date(day)).toBe('Oct 8, 2026');
+    await i18n.use('ar');
+    expect(i18n.date(day)).toBe(
+      new Intl.DateTimeFormat('ar-EG-u-nu-latn', { dateStyle: 'medium' }).format(new Date(day)),
+    );
+  });
+
   it('US-31: every listed language has every English key', async () => {
     const english = keys(en).sort();
     for (const language of LANGUAGES) {

@@ -39,7 +39,7 @@ describe('HeaderComponent', () => {
     [null, ['Catalog', 'Log in', 'Sign up']],
     ['STUDENT', ['Catalog', 'My Learning', 'Profile', 'Change password', 'Log out']],
     ['INSTRUCTOR', ['Catalog', 'My Courses', 'Profile', 'Change password', 'Log out']],
-    ['ADMIN', ['Catalog', 'Dashboard', 'Profile', 'Change password', 'Log out']],
+    ['ADMIN', ['Catalog', 'Dashboard', 'Users', 'Categories', 'Profile', 'Change password', 'Log out']],
   ] as const)('US-04 S4: the %s menu shows exactly its items', async (r, expected) => {
     const fixture = await render(r);
     expect(mainMenuItems(fixture)).toEqual(expected);

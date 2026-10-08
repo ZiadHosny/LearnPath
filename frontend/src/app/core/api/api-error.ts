@@ -34,3 +34,10 @@ export function messageFor(error: unknown, i18n: I18nService): string {
   if (code && KNOWN_CODES.has(code)) return i18n.t(`errors.${code}`);
   return error.error?.error?.message ?? i18n.t('errors.generic');
 }
+
+// Field errors from a 400 VALIDATION_ERROR, already in the requested language.
+export function errorDetails(error: unknown): { field: string; message: string }[] {
+  if (!(error instanceof HttpErrorResponse)) return [];
+  const details = error.error?.error?.details;
+  return Array.isArray(details) ? details : [];
+}
